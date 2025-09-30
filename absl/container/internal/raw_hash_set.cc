@@ -1097,8 +1097,8 @@ class ProbedItemEncoder {
 
  private:
   static ProbedItem* AlignToNextItem(void* ptr) {
-    return reinterpret_cast<ProbedItem*>(AlignUpTo(
-        reinterpret_cast<uintptr_t>(ptr), alignof(ProbedItem)));
+    return reinterpret_cast<ProbedItem*>(
+        AlignUpTo(reinterpret_cast<uintptr_t>(ptr), alignof(ProbedItem)));
   }
 
   ProbedItem* OverflowBufferStart() const {

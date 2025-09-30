@@ -21,11 +21,12 @@
 #define ABSL_DEBUGGING_INTERNAL_STACKTRACE_GENERIC_INL_H_
 
 #include <execinfo.h>
+
 #include <atomic>
 #include <cstring>
 
-#include "absl/debugging/stacktrace.h"
 #include "absl/base/attributes.h"
+#include "absl/debugging/stacktrace.h"
 
 // Sometimes, we can try to get a stack trace from within a stack
 // trace, because we don't block signals inside this code (which would be too
@@ -66,18 +67,15 @@ static int UnwindImpl(void** result, uintptr_t* frames, int* sizes,
 
   static_cast<void>(ucp);  // Unused.
   static const int kStackLength = 64;
-  void * stack[kStackLength];
+  void* stack[kStackLength];
   int size;
 
   size = backtrace(stack, kStackLength);
   skip_count++;  // we want to skip the current frame as well
   int result_count = size - skip_count;
-  if (result_count < 0)
-    result_count = 0;
-  if (result_count > max_depth)
-    result_count = max_depth;
-  for (int i = 0; i < result_count; i++)
-    result[i] = stack[i + skip_count];
+  if (result_count < 0) result_count = 0;
+  if (result_count > max_depth) result_count = max_depth;
+  for (int i = 0; i < result_count; i++) result[i] = stack[i + skip_count];
 
   if (IS_STACK_FRAMES) {
     // No implementation for finding out the stack frames yet.
@@ -104,9 +102,7 @@ static int UnwindImpl(void** result, uintptr_t* frames, int* sizes,
 namespace absl {
 ABSL_NAMESPACE_BEGIN
 namespace debugging_internal {
-bool StackTraceWorksForTest() {
-  return true;
-}
+bool StackTraceWorksForTest() { return true; }
 }  // namespace debugging_internal
 ABSL_NAMESPACE_END
 }  // namespace absl

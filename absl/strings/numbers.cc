@@ -234,8 +234,8 @@ inline uint64_t PrepareEightDigits(uint32_t i) {
   return tens;
 }
 
-inline ABSL_ATTRIBUTE_ALWAYS_INLINE char* absl_nonnull EncodeFullU32(
-    uint32_t n, char* absl_nonnull out_str) {
+inline ABSL_ATTRIBUTE_ALWAYS_INLINE char* absl_nonnull
+EncodeFullU32(uint32_t n, char* absl_nonnull out_str) {
   if (n < 10) {
     *out_str = static_cast<char>('0' + n);
     return out_str + 1;
@@ -265,11 +265,11 @@ inline ABSL_ATTRIBUTE_ALWAYS_INLINE char* EncodeFullU64(uint64_t i,
   uint32_t mod08;
   if (i < 1'0000'0000'0000'0000ull) {
     uint32_t div08 = static_cast<uint32_t>(i / 100'000'000ull);
-    mod08 =  static_cast<uint32_t>(i % 100'000'000ull);
+    mod08 = static_cast<uint32_t>(i % 100'000'000ull);
     buffer = EncodeFullU32(div08, buffer);
   } else {
     uint64_t div08 = i / 100'000'000ull;
-    mod08 =  static_cast<uint32_t>(i % 100'000'000ull);
+    mod08 = static_cast<uint32_t>(i % 100'000'000ull);
     uint32_t div016 = static_cast<uint32_t>(div08 / 100'000'000ull);
     uint32_t div08mod08 = static_cast<uint32_t>(div08 % 100'000'000ull);
     uint64_t mid_result = PrepareEightDigits(div08mod08) + kEightZeroBytes;
@@ -293,15 +293,15 @@ void numbers_internal::PutTwoDigits(uint32_t i, char* absl_nonnull buf) {
   little_endian::Store16(buf, static_cast<uint16_t>(base));
 }
 
-char* absl_nonnull numbers_internal::FastIntToBuffer(
-    uint32_t n, char* absl_nonnull out_str) {
+char* absl_nonnull
+numbers_internal::FastIntToBuffer(uint32_t n, char* absl_nonnull out_str) {
   out_str = EncodeFullU32(n, out_str);
   *out_str = '\0';
   return out_str;
 }
 
-char* absl_nonnull numbers_internal::FastIntToBuffer(
-    int32_t i, char* absl_nonnull buffer) {
+char* absl_nonnull
+numbers_internal::FastIntToBuffer(int32_t i, char* absl_nonnull buffer) {
   uint32_t u = static_cast<uint32_t>(i);
   if (i < 0) {
     *buffer++ = '-';
@@ -315,15 +315,15 @@ char* absl_nonnull numbers_internal::FastIntToBuffer(
   return buffer;
 }
 
-char* absl_nonnull numbers_internal::FastIntToBuffer(
-    uint64_t i, char* absl_nonnull buffer) {
+char* absl_nonnull
+numbers_internal::FastIntToBuffer(uint64_t i, char* absl_nonnull buffer) {
   buffer = EncodeFullU64(i, buffer);
   *buffer = '\0';
   return buffer;
 }
 
-char* absl_nonnull numbers_internal::FastIntToBuffer(
-    int64_t i, char* absl_nonnull buffer) {
+char* absl_nonnull
+numbers_internal::FastIntToBuffer(int64_t i, char* absl_nonnull buffer) {
   uint64_t u = static_cast<uint64_t>(i);
   if (i < 0) {
     *buffer++ = '-';
@@ -803,13 +803,13 @@ struct LookupTables {
 // An array initializer macro for X/base where base in [0, 36].
 // However, note that lookups for base in [0, 1] should never happen because
 // base has been validated to be in [2, 36] by safe_parse_sign_and_base().
-#define X_OVER_BASE_INITIALIZER(X)                                        \
-  {                                                                       \
-    0, 0, X / 2, X / 3, X / 4, X / 5, X / 6, X / 7, X / 8, X / 9, X / 10, \
-        X / 11, X / 12, X / 13, X / 14, X / 15, X / 16, X / 17, X / 18,   \
-        X / 19, X / 20, X / 21, X / 22, X / 23, X / 24, X / 25, X / 26,   \
-        X / 27, X / 28, X / 29, X / 30, X / 31, X / 32, X / 33, X / 34,   \
-        X / 35, X / 36,                                                   \
+#define X_OVER_BASE_INITIALIZER(X)                                    \
+  {                                                                   \
+      0,      0,      X / 2,  X / 3,  X / 4,  X / 5,  X / 6,  X / 7,  \
+      X / 8,  X / 9,  X / 10, X / 11, X / 12, X / 13, X / 14, X / 15, \
+      X / 16, X / 17, X / 18, X / 19, X / 20, X / 21, X / 22, X / 23, \
+      X / 24, X / 25, X / 26, X / 27, X / 28, X / 29, X / 30, X / 31, \
+      X / 32, X / 33, X / 34, X / 35, X / 36,                         \
   }
 
 // This kVmaxOverBase is generated with
@@ -1091,8 +1091,7 @@ inline bool safe_uint_internal(absl::string_view text,
 namespace numbers_internal {
 
 // Digit conversion.
-ABSL_CONST_INIT ABSL_DLL const char kHexChar[] =
-    "0123456789abcdef";
+ABSL_CONST_INIT ABSL_DLL const char kHexChar[] = "0123456789abcdef";
 
 ABSL_CONST_INIT ABSL_DLL const char kHexTable[513] =
     "000102030405060708090a0b0c0d0e0f"

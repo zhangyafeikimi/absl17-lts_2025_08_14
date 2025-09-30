@@ -240,10 +240,9 @@ struct Hex {
  private:
   Hex(PadSpec spec, uint64_t v)
       : value(v),
-        width(spec == absl::kNoPad
-                  ? 1
-                  : spec >= absl::kSpacePad2 ? spec - absl::kSpacePad2 + 2
-                                             : spec - absl::kZeroPad2 + 2),
+        width(spec == absl::kNoPad       ? 1
+              : spec >= absl::kSpacePad2 ? spec - absl::kSpacePad2 + 2
+                                         : spec - absl::kZeroPad2 + 2),
         fill(spec >= absl::kSpacePad2 ? ' ' : '0') {}
 };
 
@@ -292,8 +291,8 @@ struct Dec {
       // But...: if the fill character is '0', then it's <+/-><fill><digits>
       bool add_sign_again = false;
       if (dec.neg && dec.fill == '0') {  // If filling with '0',
-        ++writer;                    // ignore the sign we just added
-        add_sign_again = true;       // and re-add the sign later.
+        ++writer;                        // ignore the sign we just added
+        add_sign_again = true;           // and re-add the sign later.
       }
       writer -= fillers;
       std::fill_n(writer, fillers, dec.fill);

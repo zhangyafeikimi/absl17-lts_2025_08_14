@@ -80,11 +80,11 @@
 #include "absl/base/attributes.h"
 #include "absl/base/config.h"
 #include "absl/base/nullability.h"
-#include "absl/strings/internal/str_format/arg.h"  // IWYU pragma: export
-#include "absl/strings/internal/str_format/bind.h"  // IWYU pragma: export
-#include "absl/strings/internal/str_format/checker.h"  // IWYU pragma: export
+#include "absl/strings/internal/str_format/arg.h"        // IWYU pragma: export
+#include "absl/strings/internal/str_format/bind.h"       // IWYU pragma: export
+#include "absl/strings/internal/str_format/checker.h"    // IWYU pragma: export
 #include "absl/strings/internal/str_format/extension.h"  // IWYU pragma: export
-#include "absl/strings/internal/str_format/parser.h"  // IWYU pragma: export
+#include "absl/strings/internal/str_format/parser.h"     // IWYU pragma: export
 #include "absl/strings/string_view.h"
 #include "absl/types/span.h"
 

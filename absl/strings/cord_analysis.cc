@@ -66,7 +66,7 @@ template <>
 struct RawUsage<Mode::kTotalMorePrecise> {
   size_t total = 0;
   // TODO(b/289250880): Replace this with a flat_hash_set.
-  std::unordered_set<const CordRep* absl_nonnull> counted;
+  std::unordered_set<const CordRep * absl_nonnull> counted;
 
   void Add(size_t size, CordRepRef<Mode::kTotalMorePrecise> repref) {
     if (counted.insert(repref.rep).second) {

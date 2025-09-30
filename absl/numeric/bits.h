@@ -59,7 +59,7 @@ ABSL_NAMESPACE_BEGIN
 // libc++ had the wrong signature for std::rotl and std::rotr
 // prior to libc++ 18.0.
 //
-#if (defined(__cpp_lib_bitops) && __cpp_lib_bitops >= 201907L) &&     \
+#if (defined(__cpp_lib_bitops) && __cpp_lib_bitops >= 201907L) && \
     (!defined(_LIBCPP_VERSION) || _LIBCPP_VERSION >= 180000)
 using std::rotl;
 using std::rotr;

@@ -366,7 +366,7 @@ class CRC32AcceleratedX86ARMCombinedMultipleStreams
     if (strategy != CutoffStrategy::Unroll64CRC && (length < kSmallCutoff)) {
       // fallthrough; Use the same strategy as we do for processing the
       // remaining bytes after any other strategy.
-    }  else if (length < kMediumCutoff) {
+    } else if (length < kMediumCutoff) {
       // For medium blocks we run 3 crc streams and combine them as described in
       // Intel paper above. Running 4th stream doesn't help, because crc
       // instruction has latency 3 and throughput 1.

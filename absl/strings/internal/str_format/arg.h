@@ -214,8 +214,7 @@ ArgConvertResult<FormatConversionCharSetInternal::p> FormatConvertImpl(
 
 // Strings.
 using StringConvertResult = ArgConvertResult<FormatConversionCharSetUnion(
-    FormatConversionCharSetInternal::s,
-    FormatConversionCharSetInternal::v)>;
+    FormatConversionCharSetInternal::s, FormatConversionCharSetInternal::v)>;
 StringConvertResult FormatConvertImpl(const std::string& v,
                                       FormatConversionSpecImpl conv,
                                       FormatSinkImpl* sink);
@@ -237,8 +236,7 @@ inline StringConvertResult FormatConvertImpl(std::string_view v,
 #endif  // !ABSL_USES_STD_STRING_VIEW
 
 using StringPtrConvertResult = ArgConvertResult<FormatConversionCharSetUnion(
-    FormatConversionCharSetInternal::s,
-    FormatConversionCharSetInternal::p)>;
+    FormatConversionCharSetInternal::s, FormatConversionCharSetInternal::p)>;
 StringPtrConvertResult FormatConvertImpl(const char* v,
                                          FormatConversionSpecImpl conv,
                                          FormatSinkImpl* sink);
@@ -303,8 +301,7 @@ FloatingConvertResult FormatConvertImpl(long double v,
 // Chars.
 CharConvertResult FormatConvertImpl(char v, FormatConversionSpecImpl conv,
                                     FormatSinkImpl* sink);
-CharConvertResult FormatConvertImpl(wchar_t v,
-                                    FormatConversionSpecImpl conv,
+CharConvertResult FormatConvertImpl(wchar_t v, FormatConversionSpecImpl conv,
                                     FormatSinkImpl* sink);
 
 // Ints.
@@ -484,8 +481,7 @@ class FormatArgImpl {
             const wchar_t*,
             typename std::conditional<
                 !kHasUserDefined && std::is_convertible<T, VoidPtr>::value,
-                VoidPtr,
-                const T&>::type>::type>::type;
+                VoidPtr, const T&>::type>::type>::type;
   };
   template <typename T>
   struct DecayType<
@@ -598,13 +594,12 @@ class FormatArgImpl {
       return ToInt<T>(arg, static_cast<int*>(out), std::is_integral<T>(),
                       std::is_enum<T>());
     }
-    if (ABSL_PREDICT_FALSE(!Contains(ArgumentToConv<T>(),
-                                     spec.conversion_char()))) {
+    if (ABSL_PREDICT_FALSE(
+            !Contains(ArgumentToConv<T>(), spec.conversion_char()))) {
       return false;
     }
     return str_format_internal::FormatConvertImpl(
-               Manager<T>::Value(arg), spec,
-               static_cast<FormatSinkImpl*>(out))
+               Manager<T>::Value(arg), spec, static_cast<FormatSinkImpl*>(out))
         .value;
   }
 
@@ -652,7 +647,6 @@ class FormatArgImpl {
   ABSL_INTERNAL_FORMAT_DISPATCH_INSTANTIATE_(std::wstring_view, __VA_ARGS__)
 
 ABSL_INTERNAL_FORMAT_DISPATCH_OVERLOADS_EXPAND_(extern);
-
 
 }  // namespace str_format_internal
 ABSL_NAMESPACE_END

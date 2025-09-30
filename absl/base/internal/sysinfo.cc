@@ -80,7 +80,7 @@ namespace {
 
 // Returns number of bits set in `bitMask`
 DWORD Win32CountSetBits(ULONG_PTR bitMask) {
-  for (DWORD bitSetCount = 0; ; ++bitSetCount) {
+  for (DWORD bitSetCount = 0;; ++bitSetCount) {
     if (bitMask == 0) return bitSetCount;
     bitMask &= bitMask - 1;
   }
@@ -289,7 +289,8 @@ static double MeasureTscFrequencyWithSleep(int sleep_nanoseconds) {
   struct timespec ts;
   ts.tv_sec = 0;
   ts.tv_nsec = sleep_nanoseconds;
-  while (nanosleep(&ts, &ts) != 0 && errno == EINTR) {}
+  while (nanosleep(&ts, &ts) != 0 && errno == EINTR) {
+  }
   auto t1 = GetTimeTscPair();
   double elapsed_ticks = t1.tsc - t0.tsc;
   double elapsed_time = (t1.time - t0.time) * 1e-9;
@@ -367,8 +368,8 @@ ABSL_CONST_INIT static int num_cpus = 0;
 // NumCPUs() may be called before main() and before malloc is properly
 // initialized, therefore this must not allocate memory.
 int NumCPUs() {
-  base_internal::LowLevelCallOnce(
-      &init_num_cpus_once, []() { num_cpus = GetNumCPUs(); });
+  base_internal::LowLevelCallOnce(&init_num_cpus_once,
+                                  []() { num_cpus = GetNumCPUs(); });
   return num_cpus;
 }
 
@@ -379,17 +380,15 @@ ABSL_CONST_INIT static double nominal_cpu_frequency = 1.0;
 // NominalCPUFrequency() may be called before main() and before malloc is
 // properly initialized, therefore this must not allocate memory.
 double NominalCPUFrequency() {
-  base_internal::LowLevelCallOnce(
-      &init_nominal_cpu_frequency_once,
-      []() { nominal_cpu_frequency = GetNominalCPUFrequency(); });
+  base_internal::LowLevelCallOnce(&init_nominal_cpu_frequency_once, []() {
+    nominal_cpu_frequency = GetNominalCPUFrequency();
+  });
   return nominal_cpu_frequency;
 }
 
 #if defined(_WIN32)
 
-pid_t GetTID() {
-  return pid_t{GetCurrentThreadId()};
-}
+pid_t GetTID() { return pid_t{GetCurrentThreadId()}; }
 
 #elif defined(__linux__)
 
@@ -397,9 +396,7 @@ pid_t GetTID() {
 #define SYS_gettid __NR_gettid
 #endif
 
-pid_t GetTID() {
-  return static_cast<pid_t>(syscall(SYS_gettid));
-}
+pid_t GetTID() { return static_cast<pid_t>(syscall(SYS_gettid)); }
 
 #elif defined(__akaros__)
 
@@ -420,8 +417,7 @@ pid_t GetTID() {
   // TODO(dcross): Akaros anticipates moving the thread ID to the uthread
   // structure at some point. We should modify this code to remove the cast
   // when that happens.
-  if (in_vcore_context())
-    return 0;
+  if (in_vcore_context()) return 0;
   return reinterpret_cast<struct pthread_tcb *>(current_uthread)->id;
 }
 

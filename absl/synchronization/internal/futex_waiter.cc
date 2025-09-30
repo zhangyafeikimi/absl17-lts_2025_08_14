@@ -17,15 +17,15 @@
 #ifdef ABSL_INTERNAL_HAVE_FUTEX_WAITER
 
 #include <atomic>
-#include <cstdint>
 #include <cerrno>
+#include <cstdint>
 
 #include "absl/base/config.h"
 #include "absl/base/internal/raw_logging.h"
 #include "absl/base/internal/thread_identity.h"
 #include "absl/base/optimization.h"
-#include "absl/synchronization/internal/kernel_timeout.h"
 #include "absl/synchronization/internal/futex.h"
+#include "absl/synchronization/internal/kernel_timeout.h"
 
 namespace absl {
 ABSL_NAMESPACE_BEGIN
@@ -62,8 +62,7 @@ bool FutexWaiter::Wait(KernelTimeout t) {
   while (true) {
     int32_t x = futex_.load(std::memory_order_relaxed);
     while (x != 0) {
-      if (!futex_.compare_exchange_weak(x, x - 1,
-                                        std::memory_order_acquire,
+      if (!futex_.compare_exchange_weak(x, x - 1, std::memory_order_acquire,
                                         std::memory_order_relaxed)) {
         continue;  // Raced with someone, retry.
       }

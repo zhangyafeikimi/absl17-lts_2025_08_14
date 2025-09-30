@@ -17,7 +17,7 @@
 #define ABSL_SYNCHRONIZATION_INTERNAL_STDCPP_WAITER_H_
 
 #include <condition_variable>  // NOLINT(build/c++11)
-#include <mutex>  // NOLINT(build/c++11)
+#include <mutex>               // NOLINT(build/c++11)
 
 #include "absl/base/config.h"
 #include "absl/synchronization/internal/kernel_timeout.h"

@@ -54,11 +54,13 @@ static inline ptrdiff_t ComputeStackFrameSize(const T *low, const T *high) {
 // strictness of which is controlled by the boolean parameter
 // "STRICT_UNWINDING") to reduce the chance that a bad pointer is returned.
 template <bool STRICT_UNWINDING, bool WITH_CONTEXT>
-ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS  // May read random elements from stack.
-ABSL_ATTRIBUTE_NO_SANITIZE_MEMORY   // May read random elements from stack.
-ABSL_ATTRIBUTE_NO_SANITIZE_THREAD   // May read random elements from stack.
-static void ** NextStackFrame(void **old_frame_pointer, const void *uc,
-                              const std::pair<size_t, size_t> range) {
+ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS     // May read random elements from stack.
+    ABSL_ATTRIBUTE_NO_SANITIZE_MEMORY  // May read random elements from stack.
+        ABSL_ATTRIBUTE_NO_SANITIZE_THREAD  // May read random elements from
+                                           // stack.
+    static void **
+    NextStackFrame(void **old_frame_pointer, const void *uc,
+                   const std::pair<size_t, size_t> range) {
   //               .
   //               .
   //               .
@@ -82,8 +84,7 @@ static void ** NextStackFrame(void **old_frame_pointer, const void *uc,
   // aligned.
   // TODO(#1236) this doesn't hold for ILP32E which only mandates a 4-byte
   // alignment.
-  if (frame_pointer & 15)
-    return nullptr;
+  if (frame_pointer & 15) return nullptr;
 
   // If the new frame pointer matches the signal context, avoid terminating
   // early to deal with alternate signal stacks.
@@ -100,8 +101,7 @@ static void ** NextStackFrame(void **old_frame_pointer, const void *uc,
   const ptrdiff_t frame_size =
       ComputeStackFrameSize(old_frame_pointer, new_frame_pointer);
   if (frame_size == kUnknownFrameSize) {
-    if (STRICT_UNWINDING)
-      return nullptr;
+    if (STRICT_UNWINDING) return nullptr;
 
     // In non-strict mode permit non-contiguous stacks (e.g. alternate signal
     // frame handling).
@@ -110,19 +110,19 @@ static void ** NextStackFrame(void **old_frame_pointer, const void *uc,
       return nullptr;
   }
 
-  if (frame_size > max_size)
-    return nullptr;
+  if (frame_size > max_size) return nullptr;
 
   return new_frame_pointer;
 }
 
 template <bool IS_STACK_FRAMES, bool IS_WITH_CONTEXT>
-ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS  // May read random elements from stack.
-ABSL_ATTRIBUTE_NO_SANITIZE_MEMORY   // May read random elements from stack.
-ABSL_ATTRIBUTE_NO_SANITIZE_THREAD   // May read random elements from stack.
-static int UnwindImpl(void **result, uintptr_t *frames, int *sizes,
-                      int max_depth, int skip_count, const void *ucp,
-                      int *min_dropped_frames) {
+ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS     // May read random elements from stack.
+    ABSL_ATTRIBUTE_NO_SANITIZE_MEMORY  // May read random elements from stack.
+        ABSL_ATTRIBUTE_NO_SANITIZE_THREAD  // May read random elements from
+                                           // stack.
+    static int
+    UnwindImpl(void **result, uintptr_t *frames, int *sizes, int max_depth,
+               int skip_count, const void *ucp, int *min_dropped_frames) {
   // The `frame_pointer` that is computed here points to the top of the frame.
   // The two words preceding the address are the return address and the previous
   // frame pointer.
@@ -135,8 +135,7 @@ static int UnwindImpl(void **result, uintptr_t *frames, int *sizes,
   std::pair<size_t, size_t> stack = {
       // assume that the first page is not the stack.
       static_cast<size_t>(sysconf(_SC_PAGESIZE)),
-      std::numeric_limits<size_t>::max() - sizeof(void *)
-  };
+      std::numeric_limits<size_t>::max() - sizeof(void *)};
 
   int n = 0;
   void *return_address = nullptr;
@@ -182,9 +181,8 @@ static int UnwindImpl(void **result, uintptr_t *frames, int *sizes,
       } else {
         num_dropped_frames++;
       }
-      frame_pointer =
-          NextStackFrame<!IS_STACK_FRAMES, IS_WITH_CONTEXT>(frame_pointer, ucp,
-                                                            stack);
+      frame_pointer = NextStackFrame<!IS_STACK_FRAMES, IS_WITH_CONTEXT>(
+          frame_pointer, ucp, stack);
     }
     *min_dropped_frames = num_dropped_frames;
   }

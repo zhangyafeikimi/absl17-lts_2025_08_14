@@ -103,10 +103,9 @@ std::string StrCat(const AlphaNum& a, const AlphaNum& b, const AlphaNum& c,
   // Use uint64_t to prevent size_t overflow. We assume it is not possible for
   // in memory strings to overflow a uint64_t.
   constexpr uint64_t kMaxSize = uint64_t{std::numeric_limits<size_t>::max()};
-  const uint64_t result_size = static_cast<uint64_t>(a.size()) +
-                               static_cast<uint64_t>(b.size()) +
-                               static_cast<uint64_t>(c.size()) +
-                               static_cast<uint64_t>(d.size());
+  const uint64_t result_size =
+      static_cast<uint64_t>(a.size()) + static_cast<uint64_t>(b.size()) +
+      static_cast<uint64_t>(c.size()) + static_cast<uint64_t>(d.size());
   ABSL_INTERNAL_CHECK(result_size <= kMaxSize, "size_t overflow");
   strings_internal::STLStringResizeUninitialized(
       &result, static_cast<size_t>(result_size));

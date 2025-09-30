@@ -140,7 +140,7 @@ class IntDigits {
 
     do {
       p -= 2;
-      constexpr const char* table = numbers_internal::kHexTable;
+      constexpr const char *table = numbers_internal::kHexTable;
       std::memcpy(p, table + 2 * (static_cast<size_t>(v) & 0xFF), 2);
       if (sizeof(T) == 1) break;
       v >>= 8;
@@ -220,12 +220,10 @@ string_view SignColumn(bool neg, const FormatConversionSpecImpl conv) {
   return {};
 }
 
-bool ConvertCharImpl(char v,
-                     const FormatConversionSpecImpl conv,
-                     FormatSinkImpl* sink) {
+bool ConvertCharImpl(char v, const FormatConversionSpecImpl conv,
+                     FormatSinkImpl *sink) {
   size_t fill = 0;
-  if (conv.width() >= 0)
-    fill = static_cast<size_t>(conv.width());
+  if (conv.width() >= 0) fill = static_cast<size_t>(conv.width());
   ReducePadding(1, &fill);
   if (!conv.has_left_flag()) sink->Append(fill, ' ');
   sink->Append(1, v);
@@ -239,8 +237,7 @@ bool ConvertIntImplInnerSlow(const IntDigits &as_digits,
   // Print as a sequence of Substrings:
   //   [left_spaces][sign][base_indicator][zeroes][formatted][right_spaces]
   size_t fill = 0;
-  if (conv.width() >= 0)
-    fill = static_cast<size_t>(conv.width());
+  if (conv.width() >= 0) fill = static_cast<size_t>(conv.width());
 
   string_view formatted = as_digits.without_neg_or_zero();
   ReducePadding(formatted, &fill);
@@ -309,8 +306,7 @@ inline bool ConvertStringArg(string_view v, const FormatConversionSpecImpl conv,
                                conv.has_left_flag());
 }
 
-inline bool ConvertStringArg(const wchar_t *v,
-                             size_t len,
+inline bool ConvertStringArg(const wchar_t *v, size_t len,
                              const FormatConversionSpecImpl conv,
                              FormatSinkImpl *sink) {
   FixedArray<char> mb(len * 4);
@@ -319,7 +315,9 @@ inline bool ConvertStringArg(const wchar_t *v,
   for (size_t i = 0; i < len; ++i) {
     const size_t chars =
         strings_internal::WideToUtf8(v[i], &mb[chars_written], s);
-    if (chars == static_cast<size_t>(-1)) { return false; }
+    if (chars == static_cast<size_t>(-1)) {
+      return false;
+    }
     chars_written += chars;
   }
   return ConvertStringArg(string_view(mb.data(), chars_written), conv, sink);
@@ -458,13 +456,13 @@ StringConvertResult FormatConvertImpl(string_view v,
 
 StringConvertResult FormatConvertImpl(std::wstring_view v,
                                       const FormatConversionSpecImpl conv,
-                                      FormatSinkImpl* sink) {
+                                      FormatSinkImpl *sink) {
   return {ConvertStringArg(v.data(), v.size(), conv, sink)};
 }
 
-StringPtrConvertResult FormatConvertImpl(const char* v,
+StringPtrConvertResult FormatConvertImpl(const char *v,
                                          const FormatConversionSpecImpl conv,
-                                         FormatSinkImpl* sink) {
+                                         FormatSinkImpl *sink) {
   if (conv.conversion_char() == FormatConversionCharInternal::p)
     return {FormatConvertImpl(VoidPtr(v), conv, sink).value};
   size_t len;
@@ -479,9 +477,9 @@ StringPtrConvertResult FormatConvertImpl(const char* v,
   return {ConvertStringArg(string_view(v, len), conv, sink)};
 }
 
-StringPtrConvertResult FormatConvertImpl(const wchar_t* v,
+StringPtrConvertResult FormatConvertImpl(const wchar_t *v,
                                          const FormatConversionSpecImpl conv,
-                                         FormatSinkImpl* sink) {
+                                         FormatSinkImpl *sink) {
   if (conv.conversion_char() == FormatConversionCharInternal::p) {
     return {FormatConvertImpl(VoidPtr(v), conv, sink).value};
   }
@@ -499,8 +497,8 @@ StringPtrConvertResult FormatConvertImpl(const wchar_t* v,
 
 StringPtrConvertResult FormatConvertImpl(std::nullptr_t,
                                          const FormatConversionSpecImpl conv,
-                                         FormatSinkImpl* sink) {
-  return FormatConvertImpl(static_cast<const char*>(nullptr), conv, sink);
+                                         FormatSinkImpl *sink) {
+  return FormatConvertImpl(static_cast<const char *>(nullptr), conv, sink);
 }
 
 // ==================== Raw pointers ====================
@@ -539,7 +537,7 @@ CharConvertResult FormatConvertImpl(char v, const FormatConversionSpecImpl conv,
 }
 CharConvertResult FormatConvertImpl(wchar_t v,
                                     const FormatConversionSpecImpl conv,
-                                    FormatSinkImpl* sink) {
+                                    FormatSinkImpl *sink) {
   return {ConvertIntArg(v, conv, sink)};
 }
 
@@ -606,8 +604,6 @@ IntegralConvertResult FormatConvertImpl(absl::uint128 v,
 }
 
 ABSL_INTERNAL_FORMAT_DISPATCH_OVERLOADS_EXPAND_();
-
-
 
 }  // namespace str_format_internal
 

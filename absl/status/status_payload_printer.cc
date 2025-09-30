@@ -27,9 +27,7 @@ void SetStatusPayloadPrinter(StatusPayloadPrinter printer) {
   storage.Store(printer);
 }
 
-StatusPayloadPrinter GetStatusPayloadPrinter() {
-  return storage.Load();
-}
+StatusPayloadPrinter GetStatusPayloadPrinter() { return storage.Load(); }
 
 }  // namespace status_internal
 ABSL_NAMESPACE_END

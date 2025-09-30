@@ -15,9 +15,7 @@ static int UnwindImpl(void** /* result */, uintptr_t* /* frames */,
 namespace absl {
 ABSL_NAMESPACE_BEGIN
 namespace debugging_internal {
-bool StackTraceWorksForTest() {
-  return false;
-}
+bool StackTraceWorksForTest() { return false; }
 }  // namespace debugging_internal
 ABSL_NAMESPACE_END
 }  // namespace absl

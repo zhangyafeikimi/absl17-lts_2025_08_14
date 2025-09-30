@@ -64,7 +64,6 @@ struct Elem<CompressedTuple<B...>, I>
 template <typename D, size_t I>
 using ElemT = typename Elem<D, I>::type;
 
-
 template <typename T>
 constexpr bool ShouldUseBase() {
   return std::is_class<T>::value && std::is_empty<T>::value &&
@@ -150,8 +149,8 @@ std::true_type Or(std::initializer_list<bool>);
 // of CompressedTuple below.
 template <typename... Ts>
 constexpr bool ShouldAnyUseBase() {
-  return decltype(
-      Or({std::integral_constant<bool, ShouldUseBase<Ts>()>()...})){};
+  return decltype(Or(
+      {std::integral_constant<bool, ShouldUseBase<Ts>()>()...})){};
 }
 
 template <typename T, typename V>

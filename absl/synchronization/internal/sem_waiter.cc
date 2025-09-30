@@ -20,8 +20,8 @@
 
 #include <atomic>
 #include <cassert>
-#include <cstdint>
 #include <cerrno>
+#include <cstdint>
 
 #include "absl/base/config.h"
 #include "absl/base/internal/raw_logging.h"
@@ -70,8 +70,7 @@ bool SemWaiter::Wait(KernelTimeout t) {
   while (true) {
     int x = wakeups_.load(std::memory_order_relaxed);
     while (x != 0) {
-      if (!wakeups_.compare_exchange_weak(x, x - 1,
-                                          std::memory_order_acquire,
+      if (!wakeups_.compare_exchange_weak(x, x - 1, std::memory_order_acquire,
                                           std::memory_order_relaxed)) {
         continue;  // Raced with someone, retry.
       }

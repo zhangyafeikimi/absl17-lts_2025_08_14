@@ -30,12 +30,12 @@ constexpr uintptr_t kUnknownStackEnd =
 
 #if defined(__linux__)
 // Returns the address of the VDSO __kernel_rt_sigreturn function, if present.
-static const unsigned char* GetKernelRtSigreturnAddress() {
+static const unsigned char *GetKernelRtSigreturnAddress() {
   constexpr uintptr_t kImpossibleAddress = 1;
   ABSL_CONST_INIT static std::atomic<uintptr_t> memoized{kImpossibleAddress};
   uintptr_t address = memoized.load(std::memory_order_relaxed);
   if (address != kImpossibleAddress) {
-    return reinterpret_cast<const unsigned char*>(address);
+    return reinterpret_cast<const unsigned char *>(address);
   }
 
   address = reinterpret_cast<uintptr_t>(nullptr);
@@ -65,22 +65,22 @@ static const unsigned char* GetKernelRtSigreturnAddress() {
 #endif
 
   memoized.store(address, std::memory_order_relaxed);
-  return reinterpret_cast<const unsigned char*>(address);
+  return reinterpret_cast<const unsigned char *>(address);
 }
 #endif  // __linux__
 
 // Compute the size of a stack frame in [low..high).  We assume that
 // low < high.  Return size of kUnknownFrameSize.
-template<typename T>
-static size_t ComputeStackFrameSize(const T* low,
-                                           const T* high) {
-  const char* low_char_ptr = reinterpret_cast<const char *>(low);
-  const char* high_char_ptr = reinterpret_cast<const char *>(high);
+template <typename T>
+static size_t ComputeStackFrameSize(const T *low, const T *high) {
+  const char *low_char_ptr = reinterpret_cast<const char *>(low);
+  const char *high_char_ptr = reinterpret_cast<const char *>(high);
   return low < high ? static_cast<size_t>(high_char_ptr - low_char_ptr)
                     : kUnknownFrameSize;
 }
 
-// Saves stack info that is expensive to calculate to avoid recalculating per frame.
+// Saves stack info that is expensive to calculate to avoid recalculating per
+// frame.
 struct StackInfo {
   uintptr_t stack_low;
   uintptr_t stack_high;
@@ -88,10 +88,9 @@ struct StackInfo {
   uintptr_t sig_stack_high;
 };
 
-static bool InsideSignalStack(void** ptr, const StackInfo* stack_info) {
+static bool InsideSignalStack(void **ptr, const StackInfo *stack_info) {
   uintptr_t comparable_ptr = reinterpret_cast<uintptr_t>(ptr);
-  if (stack_info->sig_stack_high == kUnknownStackEnd)
-    return false;
+  if (stack_info->sig_stack_high == kUnknownStackEnd) return false;
   return (comparable_ptr >= stack_info->sig_stack_low &&
           comparable_ptr < stack_info->sig_stack_high);
 }
@@ -100,13 +99,15 @@ static bool InsideSignalStack(void** ptr, const StackInfo* stack_info) {
 // stackframe, or return null if no stackframe can be found. Perform sanity
 // checks (the strictness of which is controlled by the boolean parameter
 // "STRICT_UNWINDING") to reduce the chance that a bad pointer is returned.
-template<bool STRICT_UNWINDING, bool WITH_CONTEXT>
-ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS  // May read random elements from stack.
-ABSL_ATTRIBUTE_NO_SANITIZE_MEMORY   // May read random elements from stack.
-ABSL_ATTRIBUTE_NO_SANITIZE_THREAD   // May read random elements from stack.
-static void **NextStackFrame(void **old_frame_pointer, const void *uc,
-                             const StackInfo *stack_info) {
-  void **new_frame_pointer = reinterpret_cast<void**>(*old_frame_pointer);
+template <bool STRICT_UNWINDING, bool WITH_CONTEXT>
+ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS     // May read random elements from stack.
+    ABSL_ATTRIBUTE_NO_SANITIZE_MEMORY  // May read random elements from stack.
+        ABSL_ATTRIBUTE_NO_SANITIZE_THREAD  // May read random elements from
+                                           // stack.
+    static void **
+    NextStackFrame(void **old_frame_pointer, const void *uc,
+                   const StackInfo *stack_info) {
+  void **new_frame_pointer = reinterpret_cast<void **>(*old_frame_pointer);
 
 #if defined(__linux__)
   if (WITH_CONTEXT && uc != nullptr) {
@@ -131,8 +132,7 @@ static void **NextStackFrame(void **old_frame_pointer, const void *uc,
 #endif
 
   // The frame pointer should be 8-byte aligned.
-  if ((reinterpret_cast<uintptr_t>(new_frame_pointer) & 7) != 0)
-    return nullptr;
+  if ((reinterpret_cast<uintptr_t>(new_frame_pointer) & 7) != 0) return nullptr;
 
   uintptr_t new_fp_comparable = reinterpret_cast<uintptr_t>(new_frame_pointer);
   // Only check the size if both frames are in the same stack.
@@ -146,8 +146,7 @@ static void **NextStackFrame(void **old_frame_pointer, const void *uc,
     const size_t max_size = STRICT_UNWINDING ? 100000 : 1000000;
     const size_t frame_size =
         ComputeStackFrameSize(old_frame_pointer, new_frame_pointer);
-    if (frame_size == kUnknownFrameSize)
-       return nullptr;
+    if (frame_size == kUnknownFrameSize) return nullptr;
     // A very large frame may mean corrupt memory or an erroneous frame
     // pointer. But also maybe just a plain-old large frame.  Assume that if the
     // frame is within a known stack, then it is valid.
@@ -191,18 +190,20 @@ template <bool IS_STACK_FRAMES, bool IS_WITH_CONTEXT>
 // We count on the bottom frame being this one. See the comment
 // at prev_return_address
 ABSL_ATTRIBUTE_NOINLINE
-ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS  // May read random elements from stack.
-ABSL_ATTRIBUTE_NO_SANITIZE_MEMORY   // May read random elements from stack.
-ABSL_ATTRIBUTE_NO_SANITIZE_THREAD   // May read random elements from stack.
-static int UnwindImpl(void **result, uintptr_t *frames, int *sizes,
-                      int max_depth, int skip_count, const void *ucp,
-                      int *min_dropped_frames) {
+    ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS  // May read random elements from stack.
+        ABSL_ATTRIBUTE_NO_SANITIZE_MEMORY      // May read random elements from
+                                               // stack.
+            ABSL_ATTRIBUTE_NO_SANITIZE_THREAD  // May read random elements from
+                                               // stack.
+    static int
+    UnwindImpl(void **result, uintptr_t *frames, int *sizes, int max_depth,
+               int skip_count, const void *ucp, int *min_dropped_frames) {
 #ifdef __GNUC__
-  void **frame_pointer = reinterpret_cast<void**>(__builtin_frame_address(0));
+  void **frame_pointer = reinterpret_cast<void **>(__builtin_frame_address(0));
 #else
-# error reading stack point not yet supported on this platform.
+#error reading stack point not yet supported on this platform.
 #endif
-  skip_count++;    // Skip the frame for this function.
+  skip_count++;  // Skip the frame for this function.
   int n = 0;
 
   // Assume that the first page is not stack.
@@ -220,13 +221,13 @@ static int UnwindImpl(void **result, uintptr_t *frames, int *sizes,
   // chain.  So we remember return the address of the last frame seen.  This
   // does not work for the first stack frame, which belongs to UnwindImp() but
   // we skip the frame for UnwindImp() anyway.
-  void* prev_return_address = nullptr;
+  void *prev_return_address = nullptr;
   // The nth frame size is the difference between the nth frame pointer and the
   // the frame pointer below it in the call chain. There is no frame below the
   // leaf frame, but this function is the leaf anyway, and we skip it.
-  void** prev_frame_pointer = nullptr;
+  void **prev_frame_pointer = nullptr;
 
-   while (frame_pointer && n < max_depth) {
+  while (frame_pointer && n < max_depth) {
     if (skip_count > 0) {
       skip_count--;
     } else {
@@ -278,9 +279,7 @@ static int UnwindImpl(void **result, uintptr_t *frames, int *sizes,
 namespace absl {
 ABSL_NAMESPACE_BEGIN
 namespace debugging_internal {
-bool StackTraceWorksForTest() {
-  return true;
-}
+bool StackTraceWorksForTest() { return true; }
 }  // namespace debugging_internal
 ABSL_NAMESPACE_END
 }  // namespace absl

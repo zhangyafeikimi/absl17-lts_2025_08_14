@@ -157,13 +157,13 @@
              ::absl::NormalizeLogSeverity(severity);                           \
          absl_log_internal_severity_loop; absl_log_internal_severity_loop = 0) \
   ABSL_LOG_INTERNAL_CONDITION_LEVEL_IMPL
-#define ABSL_LOG_INTERNAL_CONDITION_LEVEL_IMPL(type, condition)          \
-  ABSL_LOG_INTERNAL_##type##_CONDITION((                                  \
-      (condition) &&                                                     \
-          (absl_log_internal_severity >=                                 \
-               static_cast<::absl::LogSeverity>(ABSL_MIN_LOG_LEVEL) ||   \
-           (absl_log_internal_severity == ::absl::LogSeverity::kFatal && \
-            (::absl::log_internal::AbortQuietly(), false)))))
+#define ABSL_LOG_INTERNAL_CONDITION_LEVEL_IMPL(type, condition)       \
+  ABSL_LOG_INTERNAL_##type##_CONDITION(                               \
+      ((condition) &&                                                 \
+       (absl_log_internal_severity >=                                 \
+            static_cast<::absl::LogSeverity>(ABSL_MIN_LOG_LEVEL) ||   \
+        (absl_log_internal_severity == ::absl::LogSeverity::kFatal && \
+         (::absl::log_internal::AbortQuietly(), false)))))
 #else  // ndef ABSL_MIN_LOG_LEVEL
 #define ABSL_LOG_INTERNAL_CONDITION_INFO(type, condition) \
   ABSL_LOG_INTERNAL_##type##_CONDITION(condition)

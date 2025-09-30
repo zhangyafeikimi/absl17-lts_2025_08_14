@@ -128,45 +128,37 @@ class Arg {
     scratch_[0] = value;
   }
   Arg(short value)  // NOLINT(*)
-      : piece_(scratch_,
-               static_cast<size_t>(
-                   numbers_internal::FastIntToBuffer(value, scratch_) -
-                   scratch_)) {}
+      : piece_(scratch_, static_cast<size_t>(numbers_internal::FastIntToBuffer(
+                                                 value, scratch_) -
+                                             scratch_)) {}
   Arg(unsigned short value)  // NOLINT(*)
-      : piece_(scratch_,
-               static_cast<size_t>(
-                   numbers_internal::FastIntToBuffer(value, scratch_) -
-                   scratch_)) {}
+      : piece_(scratch_, static_cast<size_t>(numbers_internal::FastIntToBuffer(
+                                                 value, scratch_) -
+                                             scratch_)) {}
   Arg(int value)  // NOLINT(google-explicit-constructor)
-      : piece_(scratch_,
-               static_cast<size_t>(
-                   numbers_internal::FastIntToBuffer(value, scratch_) -
-                   scratch_)) {}
+      : piece_(scratch_, static_cast<size_t>(numbers_internal::FastIntToBuffer(
+                                                 value, scratch_) -
+                                             scratch_)) {}
   Arg(unsigned int value)  // NOLINT(google-explicit-constructor)
-      : piece_(scratch_,
-               static_cast<size_t>(
-                   numbers_internal::FastIntToBuffer(value, scratch_) -
-                   scratch_)) {}
+      : piece_(scratch_, static_cast<size_t>(numbers_internal::FastIntToBuffer(
+                                                 value, scratch_) -
+                                             scratch_)) {}
   Arg(long value)  // NOLINT(*)
-      : piece_(scratch_,
-               static_cast<size_t>(
-                   numbers_internal::FastIntToBuffer(value, scratch_) -
-                   scratch_)) {}
+      : piece_(scratch_, static_cast<size_t>(numbers_internal::FastIntToBuffer(
+                                                 value, scratch_) -
+                                             scratch_)) {}
   Arg(unsigned long value)  // NOLINT(*)
-      : piece_(scratch_,
-               static_cast<size_t>(
-                   numbers_internal::FastIntToBuffer(value, scratch_) -
-                   scratch_)) {}
+      : piece_(scratch_, static_cast<size_t>(numbers_internal::FastIntToBuffer(
+                                                 value, scratch_) -
+                                             scratch_)) {}
   Arg(long long value)  // NOLINT(*)
-      : piece_(scratch_,
-               static_cast<size_t>(
-                   numbers_internal::FastIntToBuffer(value, scratch_) -
-                   scratch_)) {}
+      : piece_(scratch_, static_cast<size_t>(numbers_internal::FastIntToBuffer(
+                                                 value, scratch_) -
+                                             scratch_)) {}
   Arg(unsigned long long value)  // NOLINT(*)
-      : piece_(scratch_,
-               static_cast<size_t>(
-                   numbers_internal::FastIntToBuffer(value, scratch_) -
-                   scratch_)) {}
+      : piece_(scratch_, static_cast<size_t>(numbers_internal::FastIntToBuffer(
+                                                 value, scratch_) -
+                                             scratch_)) {}
   Arg(float value)  // NOLINT(google-explicit-constructor)
       : piece_(scratch_, numbers_internal::SixDigitsToBuffer(value, scratch_)) {
   }
@@ -243,11 +235,10 @@ constexpr const char* absl_nonnull SkipNumber(const char* absl_nonnull format) {
 }
 
 constexpr int PlaceholderBitmask(const char* absl_nonnull format) {
-  return !*format
-             ? 0
-             : *format != '$' ? PlaceholderBitmask(format + 1)
-                              : (CalculateOneBit(format + 1) |
-                                 PlaceholderBitmask(SkipNumber(format + 1)));
+  return !*format         ? 0
+         : *format != '$' ? PlaceholderBitmask(format + 1)
+                          : (CalculateOneBit(format + 1) |
+                             PlaceholderBitmask(SkipNumber(format + 1)));
 }
 #endif  // ABSL_BAD_CALL_IF
 

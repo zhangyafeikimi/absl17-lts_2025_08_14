@@ -52,13 +52,12 @@ constexpr int64_t Int128High64(int128 v) {
 constexpr int128::int128(int64_t high, uint64_t low)
     // Initially cast to unsigned to prevent a left shift that overflows.
     : v_(int128_internal::BitCastToSigned(static_cast<unsigned __int128>(high)
-                                           << 64) |
+                                          << 64) |
          low) {}
-
 
 constexpr int128::int128(int v) : v_{v} {}
 
-constexpr int128::int128(long v) : v_{v} {}       // NOLINT(runtime/int)
+constexpr int128::int128(long v) : v_{v} {}  // NOLINT(runtime/int)
 
 constexpr int128::int128(long long v) : v_{v} {}  // NOLINT(runtime/int)
 
@@ -73,17 +72,11 @@ constexpr int128::int128(unsigned long long v) : v_{v} {}
 
 constexpr int128::int128(unsigned __int128 v) : v_{static_cast<__int128>(v)} {}
 
-inline int128::int128(float v) {
-  v_ = static_cast<__int128>(v);
-}
+inline int128::int128(float v) { v_ = static_cast<__int128>(v); }
 
-inline int128::int128(double v) {
-  v_ = static_cast<__int128>(v);
-}
+inline int128::int128(double v) { v_ = static_cast<__int128>(v); }
 
-inline int128::int128(long double v) {
-  v_ = static_cast<__int128>(v);
-}
+inline int128::int128(long double v) { v_ = static_cast<__int128>(v); }
 
 constexpr int128::int128(uint128 v) : v_{static_cast<__int128>(v)} {}
 
@@ -119,9 +112,7 @@ constexpr int128::operator unsigned short() const {  // NOLINT(runtime/int)
   return static_cast<unsigned short>(v_);            // NOLINT(runtime/int)
 }
 
-constexpr int128::operator int() const {
-  return static_cast<int>(v_);
-}
+constexpr int128::operator int() const { return static_cast<int>(v_); }
 
 constexpr int128::operator unsigned int() const {
   return static_cast<unsigned int>(v_);
@@ -161,7 +152,7 @@ inline int128::operator long double() const {
   return static_cast<long double>(v_);
 }
 
-#else  // Clang on PowerPC
+#else   // Clang on PowerPC
 
 inline int128::operator float() const {
   // We must convert the absolute value and then negate as needed, because

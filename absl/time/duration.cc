@@ -908,7 +908,7 @@ bool AbslParseFlag(absl::string_view text, Duration* dst, std::string*) {
 }
 
 std::string AbslUnparseFlag(Duration d) { return FormatDuration(d); }
-bool ParseFlag(const std::string& text, Duration* dst, std::string* ) {
+bool ParseFlag(const std::string& text, Duration* dst, std::string*) {
   return ParseDuration(text, dst);
 }
 

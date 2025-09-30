@@ -97,7 +97,7 @@
 
 #else  // NDEBUG
 
-#define ABSL_RAW_DLOG(severity, ...)                   \
+#define ABSL_RAW_DLOG(severity, ...) \
   while (false) ABSL_RAW_LOG(severity, __VA_ARGS__)
 #define ABSL_RAW_DCHECK(condition, message) \
   while (false) ABSL_RAW_CHECK(condition, message)
@@ -196,8 +196,8 @@ using InternalLogFunction = void (*)(absl::LogSeverity severity,
                                      const char* file, int line,
                                      const std::string& message);
 
-ABSL_INTERNAL_ATOMIC_HOOK_ATTRIBUTES ABSL_DLL extern base_internal::AtomicHook<
-    InternalLogFunction>
+ABSL_INTERNAL_ATOMIC_HOOK_ATTRIBUTES
+ABSL_DLL extern base_internal::AtomicHook<InternalLogFunction>
     internal_log_function;
 
 // Registers hooks of the above types.  Only a single hook of each type may be

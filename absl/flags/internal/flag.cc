@@ -687,11 +687,10 @@ void FlagImpl::CheckDefaultValueParsingRoundtrip() const {
   auto dst = MakeInitValue();
   std::string error;
   if (!flags_internal::Parse(op_, v, dst.get(), &error)) {
-    ABSL_INTERNAL_LOG(
-        FATAL,
-        absl::StrCat("Flag ", Name(), " (from ", Filename(),
-                     "): string form of default value '", v,
-                     "' could not be parsed; error=", error));
+    ABSL_INTERNAL_LOG(FATAL,
+                      absl::StrCat("Flag ", Name(), " (from ", Filename(),
+                                   "): string form of default value '", v,
+                                   "' could not be parsed; error=", error));
   }
 
   // We do not compare dst to def since parsing/unparsing may make

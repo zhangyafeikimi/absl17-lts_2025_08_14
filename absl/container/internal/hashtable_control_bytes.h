@@ -41,9 +41,9 @@
 #include <arm_neon.h>
 #endif
 
+#include "absl/base/internal/endian.h"
 #include "absl/base/optimization.h"
 #include "absl/numeric/bits.h"
-#include "absl/base/internal/endian.h"
 
 namespace absl {
 ABSL_NAMESPACE_BEGIN
@@ -57,7 +57,6 @@ namespace container_internal {
 #define ABSL_SWISSTABLE_ASSERT(CONDITION) \
   assert((CONDITION) && "Try enabling sanitizers.")
 #endif
-
 
 template <typename T>
 uint32_t TrailingZeros(T x) {

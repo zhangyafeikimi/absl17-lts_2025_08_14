@@ -885,8 +885,8 @@ class Cord {
   }
 #endif
 
-  friend const CordzInfo* absl_nullable GetCordzInfoForTesting(
-      const Cord& cord);
+  friend const CordzInfo* absl_nullable
+  GetCordzInfoForTesting(const Cord& cord);
 
   // Calls the provided function once for each cord chunk, in order.  Unlike
   // Chunks(), this API will not allocate memory.
@@ -1146,8 +1146,8 @@ CordRep* absl_nonnull NewExternalRep(absl::string_view data,
 // Overload for function reference types that dispatches using a function
 // pointer because there are no `alignof()` or `sizeof()` a function reference.
 // NOLINTNEXTLINE - suppress clang-tidy raw pointer return.
-inline CordRep* absl_nonnull NewExternalRep(
-    absl::string_view data, void (&releaser)(absl::string_view)) {
+inline CordRep* absl_nonnull
+NewExternalRep(absl::string_view data, void (&releaser)(absl::string_view)) {
   return NewExternalRep(data, &releaser);
 }
 
@@ -1226,14 +1226,14 @@ inline const char* absl_nonnull Cord::InlineRep::as_chars() const {
   return data_.as_chars();
 }
 
-inline absl::cord_internal::CordRep* absl_nonnull Cord::InlineRep::as_tree()
-    const {
+inline absl::cord_internal::CordRep* absl_nonnull
+Cord::InlineRep::as_tree() const {
   assert(data_.is_tree());
   return data_.as_tree();
 }
 
-inline absl::cord_internal::CordRep* absl_nullable Cord::InlineRep::tree()
-    const {
+inline absl::cord_internal::CordRep* absl_nullable
+Cord::InlineRep::tree() const {
   if (is_tree()) {
     return as_tree();
   } else {

@@ -86,11 +86,11 @@ inline NullStream& operator<<(NullStream& str, const T&) {
   return str;
 }
 inline NullStream& operator<<(NullStream& str,
-                              std::ostream& (*)(std::ostream& os)) {
+                              std::ostream& (*)(std::ostream & os)) {
   return str;
 }
 inline NullStream& operator<<(NullStream& str,
-                              std::ios_base& (*)(std::ios_base& os)) {
+                              std::ios_base& (*)(std::ios_base & os)) {
   return str;
 }
 

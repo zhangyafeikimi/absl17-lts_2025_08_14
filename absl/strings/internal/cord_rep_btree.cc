@@ -52,9 +52,7 @@ ABSL_CONST_INIT std::atomic<bool> cord_btree_exhaustive_validation(false);
 // Prints the entire tree structure or 'rep'. External callers should
 // not specify 'depth' and leave it to its default (0) value.
 // Rep may be a CordRepBtree tree, or a SUBSTRING / EXTERNAL / FLAT node.
-void DumpAll(const CordRep* rep,
-             bool include_contents,
-             std::ostream& stream,
+void DumpAll(const CordRep* rep, bool include_contents, std::ostream& stream,
              size_t depth = 0) {
   // Allow for full height trees + substring -> flat / external nodes.
   assert(depth <= CordRepBtree::kMaxDepth + 2);
@@ -70,8 +68,7 @@ void DumpAll(const CordRep* rep,
       // Allow for up to 60 wide display of content data, which with some
       // indentation and prefix / labels keeps us within roughly 80-100 wide.
       constexpr size_t kMaxDataLength = 60;
-      stream << ", data = \""
-             << EdgeData(r).substr(0, kMaxDataLength)
+      stream << ", data = \"" << EdgeData(r).substr(0, kMaxDataLength)
              << (r->length > kMaxDataLength ? "\"..." : "\"");
     }
     stream << '\n';
@@ -192,7 +189,6 @@ inline void FastUnref(R* r, Fn&& fn) {
     fn(r);
   }
 }
-
 
 void DeleteSubstring(CordRepSubstring* substring) {
   CordRep* rep = substring->child;

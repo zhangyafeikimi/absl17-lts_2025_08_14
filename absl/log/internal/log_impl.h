@@ -58,7 +58,7 @@
   switch (const int absl_logging_internal_verbose_level = (verbose_level)) \
   case 0:                                                                  \
   default:                                                                 \
-    ABSL_LOG_INTERNAL_DLOG_IF_IMPL(                                         \
+    ABSL_LOG_INTERNAL_DLOG_IF_IMPL(                                        \
         _INFO, ABSL_VLOG_IS_ON(absl_logging_internal_verbose_level))       \
         .WithVerbosity(absl_logging_internal_verbose_level)
 #else
@@ -66,7 +66,7 @@
   switch (const int absl_logging_internal_verbose_level = (verbose_level))    \
   case 0:                                                                     \
   default:                                                                    \
-    ABSL_LOG_INTERNAL_DLOG_IF_IMPL(                                            \
+    ABSL_LOG_INTERNAL_DLOG_IF_IMPL(                                           \
         _INFO, false && ABSL_VLOG_IS_ON(absl_logging_internal_verbose_level)) \
         .WithVerbosity(absl_logging_internal_verbose_level)
 #endif

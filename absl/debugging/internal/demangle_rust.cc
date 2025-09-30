@@ -41,27 +41,48 @@ bool IsLowerHexDigit(char c) { return IsDigit(c) || ('a' <= c && c <= 'f'); }
 
 const char* BasicTypeName(char c) {
   switch (c) {
-    case 'a': return "i8";
-    case 'b': return "bool";
-    case 'c': return "char";
-    case 'd': return "f64";
-    case 'e': return "str";
-    case 'f': return "f32";
-    case 'h': return "u8";
-    case 'i': return "isize";
-    case 'j': return "usize";
-    case 'l': return "i32";
-    case 'm': return "u32";
-    case 'n': return "i128";
-    case 'o': return "u128";
-    case 'p': return "_";
-    case 's': return "i16";
-    case 't': return "u16";
-    case 'u': return "()";
-    case 'v': return "...";
-    case 'x': return "i64";
-    case 'y': return "u64";
-    case 'z': return "!";
+    case 'a':
+      return "i8";
+    case 'b':
+      return "bool";
+    case 'c':
+      return "char";
+    case 'd':
+      return "f64";
+    case 'e':
+      return "str";
+    case 'f':
+      return "f32";
+    case 'h':
+      return "u8";
+    case 'i':
+      return "isize";
+    case 'j':
+      return "usize";
+    case 'l':
+      return "i32";
+    case 'm':
+      return "u32";
+    case 'n':
+      return "i128";
+    case 'o':
+      return "u128";
+    case 'p':
+      return "_";
+    case 's':
+      return "i16";
+    case 't':
+      return "u16";
+    case 'u':
+      return "()";
+    case 'v':
+      return "...";
+    case 'x':
+      return "i64";
+    case 'y':
+      return "u64";
+    case 'z':
+      return "!";
   }
   return nullptr;
 }
@@ -108,15 +129,16 @@ class RustSymbolParser {
     // switch, but only those which appear in a cycle in the grammar.  Anything
     // acyclic can be written as ordinary functions and function calls, e.g.,
     // ParseIdentifier.
-#define ABSL_DEMANGLER_RECURSE(callee, caller) \
-    do { \
-      if (recursion_depth_ == kStackSize) return false; \
-      /* The next continue will switch on this saved value ... */ \
-      recursion_stack_[recursion_depth_++] = caller; \
-      goto callee; \
-      /* ... and will land here, resuming the suspended code. */ \
-      case caller: {} \
-    } while (0)
+#define ABSL_DEMANGLER_RECURSE(callee, caller)                  \
+  do {                                                          \
+    if (recursion_depth_ == kStackSize) return false;           \
+    /* The next continue will switch on this saved value ... */ \
+    recursion_stack_[recursion_depth_++] = caller;              \
+    goto callee;                                                \
+    /* ... and will land here, resuming the suspended code. */  \
+    case caller: {                                              \
+    }                                                           \
+  } while (0)
 
     // Parse the encoding, counting completed recursive calls to guard against
     // excessively complex input and infinite-loop bugs.
@@ -126,376 +148,387 @@ class RustSymbolParser {
       // This switch resumes the code path most recently suspended by
       // ABSL_DEMANGLER_RECURSE.
       switch (recursion_stack_[--recursion_depth_]) {
-        //
-        // symbol-name ->
-        // _R decimal-number? path instantiating-crate? vendor-specific-suffix?
-        whole_encoding:
-          if (!Eat('_') || !Eat('R')) return false;
-          // decimal-number? is always empty today, so proceed to path, which
-          // can't start with a decimal digit.
-          ABSL_DEMANGLER_RECURSE(path, kInstantiatingCrate);
-          if (IsAlpha(Peek())) {
-            ++silence_depth_;  // Print nothing more from here on.
-            ABSL_DEMANGLER_RECURSE(path, kVendorSpecificSuffix);
-          }
-          switch (Take()) {
-            case '.': case '$': case '\0': return true;
-          }
-          return false;  // unexpected trailing content
+      //
+      // symbol-name ->
+      // _R decimal-number? path instantiating-crate? vendor-specific-suffix?
+      whole_encoding:
+        if (!Eat('_') || !Eat('R')) return false;
+        // decimal-number? is always empty today, so proceed to path, which
+        // can't start with a decimal digit.
+        ABSL_DEMANGLER_RECURSE(path, kInstantiatingCrate);
+        if (IsAlpha(Peek())) {
+          ++silence_depth_;  // Print nothing more from here on.
+          ABSL_DEMANGLER_RECURSE(path, kVendorSpecificSuffix);
+        }
+        switch (Take()) {
+          case '.':
+          case '$':
+          case '\0':
+            return true;
+        }
+        return false;  // unexpected trailing content
 
-        // path -> crate-root | inherent-impl | trait-impl | trait-definition |
-        //         nested-path | generic-args | backref
-        //
-        // Note that ABSL_DEMANGLER_RECURSE does not work inside a nested switch
-        // (which would hide the generated case label).  Thus we jump out of the
-        // inner switch with gotos before performing any fake recursion.
-        path:
-          switch (Take()) {
-            case 'C': goto crate_root;
-            case 'M': goto inherent_impl;
-            case 'X': goto trait_impl;
-            case 'Y': goto trait_definition;
-            case 'N': goto nested_path;
-            case 'I': goto generic_args;
-            case 'B': goto path_backref;
-            default: return false;
-          }
+      // path -> crate-root | inherent-impl | trait-impl | trait-definition |
+      //         nested-path | generic-args | backref
+      //
+      // Note that ABSL_DEMANGLER_RECURSE does not work inside a nested switch
+      // (which would hide the generated case label).  Thus we jump out of the
+      // inner switch with gotos before performing any fake recursion.
+      path:
+        switch (Take()) {
+          case 'C':
+            goto crate_root;
+          case 'M':
+            goto inherent_impl;
+          case 'X':
+            goto trait_impl;
+          case 'Y':
+            goto trait_definition;
+          case 'N':
+            goto nested_path;
+          case 'I':
+            goto generic_args;
+          case 'B':
+            goto path_backref;
+          default:
+            return false;
+        }
 
-        // crate-root -> C identifier (C consumed above)
-        crate_root:
+      // crate-root -> C identifier (C consumed above)
+      crate_root:
+        if (!ParseIdentifier()) return false;
+        continue;
+
+      // inherent-impl -> M impl-path type (M already consumed)
+      inherent_impl:
+        if (!Emit("<")) return false;
+        ABSL_DEMANGLER_RECURSE(impl_path, kInherentImplType);
+        ABSL_DEMANGLER_RECURSE(type, kInherentImplEnding);
+        if (!Emit(">")) return false;
+        continue;
+
+      // trait-impl -> X impl-path type path (X already consumed)
+      trait_impl:
+        if (!Emit("<")) return false;
+        ABSL_DEMANGLER_RECURSE(impl_path, kTraitImplType);
+        ABSL_DEMANGLER_RECURSE(type, kTraitImplInfix);
+        if (!Emit(" as ")) return false;
+        ABSL_DEMANGLER_RECURSE(path, kTraitImplEnding);
+        if (!Emit(">")) return false;
+        continue;
+
+      // impl-path -> disambiguator? path (but never print it!)
+      impl_path:
+        ++silence_depth_;
+        {
+          int ignored_disambiguator;
+          if (!ParseDisambiguator(ignored_disambiguator)) return false;
+        }
+        ABSL_DEMANGLER_RECURSE(path, kImplPathEnding);
+        --silence_depth_;
+        continue;
+
+      // trait-definition -> Y type path (Y already consumed)
+      trait_definition:
+        if (!Emit("<")) return false;
+        ABSL_DEMANGLER_RECURSE(type, kTraitDefinitionInfix);
+        if (!Emit(" as ")) return false;
+        ABSL_DEMANGLER_RECURSE(path, kTraitDefinitionEnding);
+        if (!Emit(">")) return false;
+        continue;
+
+      // nested-path -> N namespace path identifier (N already consumed)
+      // namespace -> lower | upper
+      nested_path:
+        // Uppercase namespaces must be saved on a stack so we can print
+        // ::{closure#0} or ::{shim:vtable#0} or ::{X:name#0} as needed.
+        if (IsUpper(Peek())) {
+          if (!PushNamespace(Take())) return false;
+          ABSL_DEMANGLER_RECURSE(path, kIdentifierInUppercaseNamespace);
+          if (!Emit("::")) return false;
+          if (!ParseIdentifier(PopNamespace())) return false;
+          continue;
+        }
+
+        // Lowercase namespaces, however, are never represented in the output;
+        // they all emit just ::name.
+        if (IsLower(Take())) {
+          ABSL_DEMANGLER_RECURSE(path, kIdentifierInLowercaseNamespace);
+          if (!Emit("::")) return false;
           if (!ParseIdentifier()) return false;
           continue;
+        }
 
-        // inherent-impl -> M impl-path type (M already consumed)
-        inherent_impl:
-          if (!Emit("<")) return false;
-          ABSL_DEMANGLER_RECURSE(impl_path, kInherentImplType);
-          ABSL_DEMANGLER_RECURSE(type, kInherentImplEnding);
-          if (!Emit(">")) return false;
+        // Neither upper or lower
+        return false;
+
+      // type -> basic-type | array-type | slice-type | tuple-type |
+      //         ref-type | mut-ref-type | const-ptr-type | mut-ptr-type |
+      //         fn-type | dyn-trait-type | path | backref
+      //
+      // We use ifs instead of switch (Take()) because the default case jumps
+      // to path, which will need to see the first character not yet Taken
+      // from the input.  Because we do not use a nested switch here,
+      // ABSL_DEMANGLER_RECURSE works fine in the 'S' case.
+      type:
+        if (IsLower(Peek())) {
+          const char* type_name = BasicTypeName(Take());
+          if (type_name == nullptr || !Emit(type_name)) return false;
           continue;
-
-        // trait-impl -> X impl-path type path (X already consumed)
-        trait_impl:
-          if (!Emit("<")) return false;
-          ABSL_DEMANGLER_RECURSE(impl_path, kTraitImplType);
-          ABSL_DEMANGLER_RECURSE(type, kTraitImplInfix);
-          if (!Emit(" as ")) return false;
-          ABSL_DEMANGLER_RECURSE(path, kTraitImplEnding);
-          if (!Emit(">")) return false;
+        }
+        if (Eat('A')) {
+          // array-type = A type const
+          if (!Emit("[")) return false;
+          ABSL_DEMANGLER_RECURSE(type, kArraySize);
+          if (!Emit("; ")) return false;
+          ABSL_DEMANGLER_RECURSE(constant, kFinishArray);
+          if (!Emit("]")) return false;
           continue;
-
-        // impl-path -> disambiguator? path (but never print it!)
-        impl_path:
-          ++silence_depth_;
-          {
-            int ignored_disambiguator;
-            if (!ParseDisambiguator(ignored_disambiguator)) return false;
-          }
-          ABSL_DEMANGLER_RECURSE(path, kImplPathEnding);
-          --silence_depth_;
+        }
+        if (Eat('S')) {
+          if (!Emit("[")) return false;
+          ABSL_DEMANGLER_RECURSE(type, kSliceEnding);
+          if (!Emit("]")) return false;
           continue;
+        }
+        if (Eat('T')) goto tuple_type;
+        if (Eat('R')) {
+          if (!Emit("&")) return false;
+          if (!ParseOptionalLifetime()) return false;
+          goto type;
+        }
+        if (Eat('Q')) {
+          if (!Emit("&mut ")) return false;
+          if (!ParseOptionalLifetime()) return false;
+          goto type;
+        }
+        if (Eat('P')) {
+          if (!Emit("*const ")) return false;
+          goto type;
+        }
+        if (Eat('O')) {
+          if (!Emit("*mut ")) return false;
+          goto type;
+        }
+        if (Eat('F')) goto fn_type;
+        if (Eat('D')) goto dyn_trait_type;
+        if (Eat('B')) goto type_backref;
+        goto path;
 
-        // trait-definition -> Y type path (Y already consumed)
-        trait_definition:
-          if (!Emit("<")) return false;
-          ABSL_DEMANGLER_RECURSE(type, kTraitDefinitionInfix);
-          if (!Emit(" as ")) return false;
-          ABSL_DEMANGLER_RECURSE(path, kTraitDefinitionEnding);
-          if (!Emit(">")) return false;
+      // tuple-type -> T type* E (T already consumed)
+      tuple_type:
+        if (!Emit("(")) return false;
+
+        // The toolchain should call the unit type u instead of TE, but the
+        // grammar and other demanglers also recognize TE, so we do too.
+        if (Eat('E')) {
+          if (!Emit(")")) return false;
           continue;
+        }
 
-        // nested-path -> N namespace path identifier (N already consumed)
-        // namespace -> lower | upper
-        nested_path:
-          // Uppercase namespaces must be saved on a stack so we can print
-          // ::{closure#0} or ::{shim:vtable#0} or ::{X:name#0} as needed.
-          if (IsUpper(Peek())) {
-            if (!PushNamespace(Take())) return false;
-            ABSL_DEMANGLER_RECURSE(path, kIdentifierInUppercaseNamespace);
-            if (!Emit("::")) return false;
-            if (!ParseIdentifier(PopNamespace())) return false;
-            continue;
-          }
+        // A tuple with one element is rendered (type,) instead of (type).
+        ABSL_DEMANGLER_RECURSE(type, kAfterFirstTupleElement);
+        if (Eat('E')) {
+          if (!Emit(",)")) return false;
+          continue;
+        }
 
-          // Lowercase namespaces, however, are never represented in the output;
-          // they all emit just ::name.
-          if (IsLower(Take())) {
-            ABSL_DEMANGLER_RECURSE(path, kIdentifierInLowercaseNamespace);
-            if (!Emit("::")) return false;
-            if (!ParseIdentifier()) return false;
-            continue;
-          }
+        // A tuple with two elements is of course (x, y).
+        if (!Emit(", ")) return false;
+        ABSL_DEMANGLER_RECURSE(type, kAfterSecondTupleElement);
+        if (Eat('E')) {
+          if (!Emit(")")) return false;
+          continue;
+        }
 
-          // Neither upper or lower
-          return false;
+        // And (x, y, z) for three elements.
+        if (!Emit(", ")) return false;
+        ABSL_DEMANGLER_RECURSE(type, kAfterThirdTupleElement);
+        if (Eat('E')) {
+          if (!Emit(")")) return false;
+          continue;
+        }
 
-        // type -> basic-type | array-type | slice-type | tuple-type |
-        //         ref-type | mut-ref-type | const-ptr-type | mut-ptr-type |
-        //         fn-type | dyn-trait-type | path | backref
-        //
-        // We use ifs instead of switch (Take()) because the default case jumps
-        // to path, which will need to see the first character not yet Taken
-        // from the input.  Because we do not use a nested switch here,
-        // ABSL_DEMANGLER_RECURSE works fine in the 'S' case.
-        type:
-          if (IsLower(Peek())) {
-            const char* type_name = BasicTypeName(Take());
-            if (type_name == nullptr || !Emit(type_name)) return false;
-            continue;
-          }
-          if (Eat('A')) {
-            // array-type = A type const
-            if (!Emit("[")) return false;
-            ABSL_DEMANGLER_RECURSE(type, kArraySize);
-            if (!Emit("; ")) return false;
-            ABSL_DEMANGLER_RECURSE(constant, kFinishArray);
-            if (!Emit("]")) return false;
-            continue;
-          }
-          if (Eat('S')) {
-            if (!Emit("[")) return false;
-            ABSL_DEMANGLER_RECURSE(type, kSliceEnding);
-            if (!Emit("]")) return false;
-            continue;
-          }
-          if (Eat('T')) goto tuple_type;
-          if (Eat('R')) {
-            if (!Emit("&")) return false;
-            if (!ParseOptionalLifetime()) return false;
-            goto type;
-          }
-          if (Eat('Q')) {
-            if (!Emit("&mut ")) return false;
-            if (!ParseOptionalLifetime()) return false;
-            goto type;
-          }
-          if (Eat('P')) {
-            if (!Emit("*const ")) return false;
-            goto type;
-          }
-          if (Eat('O')) {
-            if (!Emit("*mut ")) return false;
-            goto type;
-          }
-          if (Eat('F')) goto fn_type;
-          if (Eat('D')) goto dyn_trait_type;
-          if (Eat('B')) goto type_backref;
-          goto path;
+        // For longer tuples we write (x, y, z, ...), printing none of the
+        // content of the fourth and later types.  Thus we avoid exhausting
+        // output buffers and human readers' patience when some library has a
+        // long tuple as an implementation detail, without having to
+        // completely obfuscate all tuples.
+        if (!Emit(", ...)")) return false;
+        ++silence_depth_;
+        while (!Eat('E')) {
+          ABSL_DEMANGLER_RECURSE(type, kAfterSubsequentTupleElement);
+        }
+        --silence_depth_;
+        continue;
 
-        // tuple-type -> T type* E (T already consumed)
-        tuple_type:
-          if (!Emit("(")) return false;
+      // fn-type -> F fn-sig (F already consumed)
+      // fn-sig -> binder? U? (K abi)? type* E type
+      // abi -> C | undisambiguated-identifier
+      //
+      // We follow the C++ demangler in suppressing details of function
+      // signatures.  Every function type is rendered "fn...".
+      fn_type:
+        if (!Emit("fn...")) return false;
+        ++silence_depth_;
+        if (!ParseOptionalBinder()) return false;
+        (void)Eat('U');
+        if (Eat('K')) {
+          if (!Eat('C') && !ParseUndisambiguatedIdentifier()) return false;
+        }
+        while (!Eat('E')) {
+          ABSL_DEMANGLER_RECURSE(type, kContinueParameterList);
+        }
+        ABSL_DEMANGLER_RECURSE(type, kFinishFn);
+        --silence_depth_;
+        continue;
 
-          // The toolchain should call the unit type u instead of TE, but the
-          // grammar and other demanglers also recognize TE, so we do too.
-          if (Eat('E')) {
-            if (!Emit(")")) return false;
-            continue;
-          }
-
-          // A tuple with one element is rendered (type,) instead of (type).
-          ABSL_DEMANGLER_RECURSE(type, kAfterFirstTupleElement);
-          if (Eat('E')) {
-            if (!Emit(",)")) return false;
-            continue;
-          }
-
-          // A tuple with two elements is of course (x, y).
-          if (!Emit(", ")) return false;
-          ABSL_DEMANGLER_RECURSE(type, kAfterSecondTupleElement);
-          if (Eat('E')) {
-            if (!Emit(")")) return false;
-            continue;
-          }
-
-          // And (x, y, z) for three elements.
-          if (!Emit(", ")) return false;
-          ABSL_DEMANGLER_RECURSE(type, kAfterThirdTupleElement);
-          if (Eat('E')) {
-            if (!Emit(")")) return false;
-            continue;
-          }
-
-          // For longer tuples we write (x, y, z, ...), printing none of the
-          // content of the fourth and later types.  Thus we avoid exhausting
-          // output buffers and human readers' patience when some library has a
-          // long tuple as an implementation detail, without having to
-          // completely obfuscate all tuples.
-          if (!Emit(", ...)")) return false;
-          ++silence_depth_;
+      // dyn-trait-type -> D dyn-bounds lifetime (D already consumed)
+      // dyn-bounds -> binder? dyn-trait* E
+      //
+      // The grammar strangely allows an empty trait list, even though the
+      // compiler should never output one.  We follow existing demanglers in
+      // rendering DEL_ as "dyn ".
+      //
+      // Because auto traits lengthen a type name considerably without
+      // providing much value to a search for related source code, it would be
+      // desirable to abbreviate
+      //     dyn main::Trait + std::marker::Copy + std::marker::Send
+      // to
+      //     dyn main::Trait + ...,
+      // eliding the auto traits.  But it is difficult to do so correctly, in
+      // part because there is no guarantee that the mangling will list the
+      // main trait first.  So we just print all the traits in their order of
+      // appearance in the mangled name.
+      dyn_trait_type:
+        if (!Emit("dyn ")) return false;
+        if (!ParseOptionalBinder()) return false;
+        if (!Eat('E')) {
+          ABSL_DEMANGLER_RECURSE(dyn_trait, kBeginAutoTraits);
           while (!Eat('E')) {
-            ABSL_DEMANGLER_RECURSE(type, kAfterSubsequentTupleElement);
+            if (!Emit(" + ")) return false;
+            ABSL_DEMANGLER_RECURSE(dyn_trait, kContinueAutoTraits);
           }
-          --silence_depth_;
-          continue;
+        }
+        if (!ParseRequiredLifetime()) return false;
+        continue;
 
-        // fn-type -> F fn-sig (F already consumed)
-        // fn-sig -> binder? U? (K abi)? type* E type
-        // abi -> C | undisambiguated-identifier
-        //
-        // We follow the C++ demangler in suppressing details of function
-        // signatures.  Every function type is rendered "fn...".
-        fn_type:
-          if (!Emit("fn...")) return false;
+      // dyn-trait -> path dyn-trait-assoc-binding*
+      // dyn-trait-assoc-binding -> p undisambiguated-identifier type
+      //
+      // We render nonempty binding lists as <>, omitting their contents as
+      // for generic-args.
+      dyn_trait:
+        ABSL_DEMANGLER_RECURSE(path, kContinueDynTrait);
+        if (Peek() == 'p') {
+          if (!Emit("<>")) return false;
           ++silence_depth_;
-          if (!ParseOptionalBinder()) return false;
-          (void)Eat('U');
-          if (Eat('K')) {
-            if (!Eat('C') && !ParseUndisambiguatedIdentifier()) return false;
+          while (Eat('p')) {
+            if (!ParseUndisambiguatedIdentifier()) return false;
+            ABSL_DEMANGLER_RECURSE(type, kContinueAssocBinding);
           }
-          while (!Eat('E')) {
-            ABSL_DEMANGLER_RECURSE(type, kContinueParameterList);
-          }
-          ABSL_DEMANGLER_RECURSE(type, kFinishFn);
           --silence_depth_;
+        }
+        continue;
+
+      // const -> type const-data | p | backref
+      //
+      // const is a C++ keyword, so we use the label `constant` instead.
+      constant:
+        if (Eat('B')) goto const_backref;
+        if (Eat('p')) {
+          if (!Emit("_")) return false;
           continue;
+        }
 
-        // dyn-trait-type -> D dyn-bounds lifetime (D already consumed)
-        // dyn-bounds -> binder? dyn-trait* E
+        // Scan the type without printing it.
         //
-        // The grammar strangely allows an empty trait list, even though the
-        // compiler should never output one.  We follow existing demanglers in
-        // rendering DEL_ as "dyn ".
+        // The Rust language restricts the type of a const generic argument
+        // much more than the mangling grammar does.  We do not enforce this.
         //
-        // Because auto traits lengthen a type name considerably without
-        // providing much value to a search for related source code, it would be
-        // desirable to abbreviate
-        //     dyn main::Trait + std::marker::Copy + std::marker::Send
-        // to
-        //     dyn main::Trait + ...,
-        // eliding the auto traits.  But it is difficult to do so correctly, in
-        // part because there is no guarantee that the mangling will list the
-        // main trait first.  So we just print all the traits in their order of
-        // appearance in the mangled name.
-        dyn_trait_type:
-          if (!Emit("dyn ")) return false;
-          if (!ParseOptionalBinder()) return false;
-          if (!Eat('E')) {
-            ABSL_DEMANGLER_RECURSE(dyn_trait, kBeginAutoTraits);
-            while (!Eat('E')) {
-              if (!Emit(" + ")) return false;
-              ABSL_DEMANGLER_RECURSE(dyn_trait, kContinueAutoTraits);
-            }
-          }
-          if (!ParseRequiredLifetime()) return false;
-          continue;
+        // We also do not bother printing false, true, 'A', and '\u{abcd}' for
+        // the types bool and char.  Because we do not print generic-args
+        // contents, we expect to print constants only in array sizes, and
+        // those should not be bool or char.
+        ++silence_depth_;
+        ABSL_DEMANGLER_RECURSE(type, kConstData);
+        --silence_depth_;
 
-        // dyn-trait -> path dyn-trait-assoc-binding*
-        // dyn-trait-assoc-binding -> p undisambiguated-identifier type
+        // const-data -> n? hex-digit* _
         //
-        // We render nonempty binding lists as <>, omitting their contents as
-        // for generic-args.
-        dyn_trait:
-          ABSL_DEMANGLER_RECURSE(path, kContinueDynTrait);
-          if (Peek() == 'p') {
-            if (!Emit("<>")) return false;
-            ++silence_depth_;
-            while (Eat('p')) {
-              if (!ParseUndisambiguatedIdentifier()) return false;
-              ABSL_DEMANGLER_RECURSE(type, kContinueAssocBinding);
-            }
-            --silence_depth_;
-          }
-          continue;
-
-        // const -> type const-data | p | backref
-        //
-        // const is a C++ keyword, so we use the label `constant` instead.
-        constant:
-          if (Eat('B')) goto const_backref;
-          if (Eat('p')) {
-            if (!Emit("_")) return false;
-            continue;
-          }
-
-          // Scan the type without printing it.
-          //
-          // The Rust language restricts the type of a const generic argument
-          // much more than the mangling grammar does.  We do not enforce this.
-          //
-          // We also do not bother printing false, true, 'A', and '\u{abcd}' for
-          // the types bool and char.  Because we do not print generic-args
-          // contents, we expect to print constants only in array sizes, and
-          // those should not be bool or char.
-          ++silence_depth_;
-          ABSL_DEMANGLER_RECURSE(type, kConstData);
-          --silence_depth_;
-
-          // const-data -> n? hex-digit* _
-          //
-          // Although the grammar doesn't say this, existing demanglers expect
-          // that zero is 0, not an empty digit sequence, and no nonzero value
-          // may have leading zero digits.  Also n0_ is accepted and printed as
-          // -0, though a toolchain will probably never write that encoding.
-          if (Eat('n') && !EmitChar('-')) return false;
-          if (!Emit("0x")) return false;
-          if (Eat('0')) {
-            if (!EmitChar('0')) return false;
-            if (!Eat('_')) return false;
-            continue;
-          }
-          while (IsLowerHexDigit(Peek())) {
-            if (!EmitChar(Take())) return false;
-          }
+        // Although the grammar doesn't say this, existing demanglers expect
+        // that zero is 0, not an empty digit sequence, and no nonzero value
+        // may have leading zero digits.  Also n0_ is accepted and printed as
+        // -0, though a toolchain will probably never write that encoding.
+        if (Eat('n') && !EmitChar('-')) return false;
+        if (!Emit("0x")) return false;
+        if (Eat('0')) {
+          if (!EmitChar('0')) return false;
           if (!Eat('_')) return false;
           continue;
+        }
+        while (IsLowerHexDigit(Peek())) {
+          if (!EmitChar(Take())) return false;
+        }
+        if (!Eat('_')) return false;
+        continue;
 
-        // generic-args -> I path generic-arg* E (I already consumed)
-        //
-        // We follow the C++ demangler in omitting all the arguments from the
-        // output, printing only the list opening and closing tokens.
-        generic_args:
-          ABSL_DEMANGLER_RECURSE(path, kBeginGenericArgList);
-          if (!Emit("::<>")) return false;
-          ++silence_depth_;
-          while (!Eat('E')) {
-            ABSL_DEMANGLER_RECURSE(generic_arg, kContinueGenericArgList);
-          }
-          --silence_depth_;
+      // generic-args -> I path generic-arg* E (I already consumed)
+      //
+      // We follow the C++ demangler in omitting all the arguments from the
+      // output, printing only the list opening and closing tokens.
+      generic_args:
+        ABSL_DEMANGLER_RECURSE(path, kBeginGenericArgList);
+        if (!Emit("::<>")) return false;
+        ++silence_depth_;
+        while (!Eat('E')) {
+          ABSL_DEMANGLER_RECURSE(generic_arg, kContinueGenericArgList);
+        }
+        --silence_depth_;
+        continue;
+
+      // generic-arg -> lifetime | type | K const
+      generic_arg:
+        if (Peek() == 'L') {
+          if (!ParseOptionalLifetime()) return false;
           continue;
+        }
+        if (Eat('K')) goto constant;
+        goto type;
 
-        // generic-arg -> lifetime | type | K const
-        generic_arg:
-          if (Peek() == 'L') {
-            if (!ParseOptionalLifetime()) return false;
-            continue;
-          }
-          if (Eat('K')) goto constant;
-          goto type;
+      // backref -> B base-62-number (B already consumed)
+      //
+      // The BeginBackref call parses and range-checks the base-62-number.  We
+      // always do that much.
+      //
+      // The recursive call parses and prints what the backref points at.  We
+      // save CPU and stack by skipping this work if the output would be
+      // suppressed anyway.
+      path_backref:
+        if (!BeginBackref()) return false;
+        if (silence_depth_ == 0) {
+          ABSL_DEMANGLER_RECURSE(path, kPathBackrefEnding);
+        }
+        EndBackref();
+        continue;
 
-        // backref -> B base-62-number (B already consumed)
-        //
-        // The BeginBackref call parses and range-checks the base-62-number.  We
-        // always do that much.
-        //
-        // The recursive call parses and prints what the backref points at.  We
-        // save CPU and stack by skipping this work if the output would be
-        // suppressed anyway.
-        path_backref:
-          if (!BeginBackref()) return false;
-          if (silence_depth_ == 0) {
-            ABSL_DEMANGLER_RECURSE(path, kPathBackrefEnding);
-          }
-          EndBackref();
-          continue;
+      // This represents the same backref production as in path_backref but
+      // parses the target as a type instead of a path.
+      type_backref:
+        if (!BeginBackref()) return false;
+        if (silence_depth_ == 0) {
+          ABSL_DEMANGLER_RECURSE(type, kTypeBackrefEnding);
+        }
+        EndBackref();
+        continue;
 
-        // This represents the same backref production as in path_backref but
-        // parses the target as a type instead of a path.
-        type_backref:
-          if (!BeginBackref()) return false;
-          if (silence_depth_ == 0) {
-            ABSL_DEMANGLER_RECURSE(type, kTypeBackrefEnding);
-          }
-          EndBackref();
-          continue;
-
-        const_backref:
-          if (!BeginBackref()) return false;
-          if (silence_depth_ == 0) {
-            ABSL_DEMANGLER_RECURSE(constant, kConstantBackrefEnding);
-          }
-          EndBackref();
-          continue;
+      const_backref:
+        if (!BeginBackref()) return false;
+        if (silence_depth_ == 0) {
+          ABSL_DEMANGLER_RECURSE(constant, kConstantBackrefEnding);
+        }
+        EndBackref();
+        continue;
       }
     }
 
@@ -655,7 +688,7 @@ class RustSymbolParser {
     bool overflowed = false;
     while (IsAlpha(Peek()) || IsDigit(Peek())) {
       const char c = Take();
-      if (encoded_number >= std::numeric_limits<int>::max()/62) {
+      if (encoded_number >= std::numeric_limits<int>::max() / 62) {
         // If we are close to overflowing an int, keep parsing but stop updating
         // encoded_number and remember to return -1 at the end.  The point is to
         // avoid undefined behavior while parsing crate-root disambiguators,
@@ -777,7 +810,7 @@ class RustSymbolParser {
     }
     while (IsDigit(Peek()) &&
            // avoid overflow
-           encoded_number < std::numeric_limits<int>::max()/10) {
+           encoded_number < std::numeric_limits<int>::max() / 10) {
       encoded_number = 10 * encoded_number + (Take() - '0');
     }
     if (IsDigit(Peek())) return false;  // too big

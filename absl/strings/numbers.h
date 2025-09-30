@@ -290,10 +290,10 @@ inline size_t FastHexToBufferZeroPad16(uint64_t val, char* absl_nonnull out) {
   const auto kHexDigits = _mm_setr_epi8('0', '1', '2', '3', '4', '5', '6', '7',
                                         '8', '9', 'a', 'b', 'c', 'd', 'e', 'f');
   auto v = _mm_loadl_epi64(reinterpret_cast<__m128i*>(&be));  // load lo dword
-  auto v4 = _mm_srli_epi64(v, 4);                            // shift 4 right
-  auto il = _mm_unpacklo_epi8(v4, v);                        // interleave bytes
-  auto m = _mm_and_si128(il, kNibbleMask);                   // mask out nibbles
-  auto hexchars = _mm_shuffle_epi8(kHexDigits, m);           // hex chars
+  auto v4 = _mm_srli_epi64(v, 4);                             // shift 4 right
+  auto il = _mm_unpacklo_epi8(v4, v);               // interleave bytes
+  auto m = _mm_and_si128(il, kNibbleMask);          // mask out nibbles
+  auto hexchars = _mm_shuffle_epi8(kHexDigits, m);  // hex chars
   _mm_storeu_si128(reinterpret_cast<__m128i*>(out), hexchars);
 #else
   for (int i = 0; i < 8; ++i) {

@@ -95,7 +95,7 @@ class StackArray {
 // the carry.
 // Requires: `0 <= carry <= 9`
 template <typename Int>
-inline char MultiplyBy10WithCarry(Int* v, char carry) {
+inline char MultiplyBy10WithCarry(Int *v, char carry) {
   using BiggerInt = absl::conditional_t<sizeof(Int) == 4, uint64_t, uint128>;
   BiggerInt tmp =
       10 * static_cast<BiggerInt>(*v) + static_cast<BiggerInt>(carry);
@@ -106,7 +106,7 @@ inline char MultiplyBy10WithCarry(Int* v, char carry) {
 // Calculates `(2^64 * carry + *v) / 10`.
 // Stores the quotient in `*v` and returns the remainder.
 // Requires: `0 <= carry <= 9`
-inline char DivideBy10WithCarry(uint64_t* v, char carry) {
+inline char DivideBy10WithCarry(uint64_t *v, char carry) {
   constexpr uint64_t divisor = 10;
   // 2^64 / divisor = chunk_quotient + chunk_remainder / divisor
   constexpr uint64_t chunk_quotient = (uint64_t{1} << 63) / (divisor / 2);
@@ -214,8 +214,7 @@ class BinaryToDecimal {
       }
 
       // If the highest chunk is now empty, remove it from view.
-      if (data_[after_chunk_index - 1] == 0)
-        --after_chunk_index;
+      if (data_[after_chunk_index - 1] == 0) --after_chunk_index;
 
       --decimal_start_;
       assert(decimal_start_ != after_chunk_index - 1);
@@ -295,16 +294,14 @@ class FractionalDigitGenerator {
  private:
   // Return the next digit.
   char GetOneDigit() {
-    if (!after_chunk_index_)
-      return 0;
+    if (!after_chunk_index_) return 0;
 
     char carry = 0;
     for (size_t i = after_chunk_index_; i > 0; --i) {
       carry = MultiplyBy10WithCarry(&data_[i - 1], carry);
     }
     // If the lowest chunk is now empty, remove it from view.
-    if (data_[after_chunk_index_ - 1] == 0)
-      --after_chunk_index_;
+    if (data_[after_chunk_index_ - 1] == 0) --after_chunk_index_;
     return carry;
   }
 
@@ -381,9 +378,7 @@ char *PrintIntegralDigitsFromRightFast(uint128 v, char *p) {
 // shifting.
 // Performs rounding if necessary to fit within `precision`.
 // Returns the pointer to one after the last character written.
-char* PrintFractionalDigitsFast(uint64_t v,
-                                char* start,
-                                int exp,
+char *PrintFractionalDigitsFast(uint64_t v, char *start, int exp,
                                 size_t precision) {
   char *p = start;
   v <<= (64 - exp);
@@ -410,9 +405,7 @@ char* PrintFractionalDigitsFast(uint64_t v,
 // after shifting.
 // Performs rounding if necessary to fit within `precision`.
 // Returns the pointer to one after the last character written.
-char* PrintFractionalDigitsFast(uint128 v,
-                                char* start,
-                                int exp,
+char *PrintFractionalDigitsFast(uint128 v, char *start, int exp,
                                 size_t precision) {
   char *p = start;
   v <<= (128 - exp);
@@ -483,10 +476,8 @@ Padding ExtraWidthToPadding(size_t total_size, const FormatState &state) {
   }
 }
 
-void FinalPrint(const FormatState& state,
-                absl::string_view data,
-                size_t padding_offset,
-                size_t trailing_zeros,
+void FinalPrint(const FormatState &state, absl::string_view data,
+                size_t padding_offset, size_t trailing_zeros,
                 absl::string_view data_postfix) {
   if (state.conv.width() < 0) {
     // No width specified. Fast-path.
@@ -584,16 +575,14 @@ void FormatFPositiveExpSlow(uint128 v, int exp, const FormatState &state) {
         total_digits + (state.sign_char != '\0' ? 1 : 0), state);
 
     state.sink->Append(padding.left_spaces, ' ');
-    if (state.sign_char != '\0')
-      state.sink->Append(1, state.sign_char);
+    if (state.sign_char != '\0') state.sink->Append(1, state.sign_char);
     state.sink->Append(padding.zeros, '0');
 
     do {
       state.sink->Append(btd.CurrentDigits());
     } while (btd.AdvanceDigits());
 
-    if (state.ShouldPrintDot())
-      state.sink->Append(1, '.');
+    if (state.ShouldPrintDot()) state.sink->Append(1, '.');
     state.sink->Append(state.precision, '0');
     state.sink->Append(padding.right_spaces, ' ');
   });
@@ -708,7 +697,7 @@ uint8_t GetNibble(Int n, size_t nibble_index) {
 // Add one to the given nibble, applying carry to higher nibbles. Returns true
 // if overflow, false otherwise.
 template <typename Int>
-bool IncrementNibble(size_t nibble_index, Int* n) {
+bool IncrementNibble(size_t nibble_index, Int *n) {
   constexpr size_t kShift = sizeof(Int) * 8 - 1;
   constexpr size_t kNumNibbles = sizeof(Int) * 8 / 4;
   Int before = *n >> kShift;
@@ -773,8 +762,7 @@ constexpr size_t HexFloatLeadingDigitSizeInBits() {
 // point that is not followed by 800000..., it disregards the parity and rounds
 // up if > 8 and rounds down if < 8.
 template <typename Int>
-bool HexFloatNeedsRoundUp(Int mantissa,
-                          size_t final_nibble_displayed,
+bool HexFloatNeedsRoundUp(Int mantissa, size_t final_nibble_displayed,
                           uint8_t leading) {
   // If the last nibble (hex digit) to be displayed is the lowest on in the
   // mantissa then that means that we don't have any further nibbles to inform
@@ -1138,7 +1126,7 @@ Decomposed<Float> Decompose(Float v) {
 // In Fixed mode, we add a '.' at the end.
 // In Precision mode, we add a '.' after the first digit.
 template <FormatStyle mode, typename Int>
-size_t PrintIntegralDigits(Int digits, Buffer* out) {
+size_t PrintIntegralDigits(Int digits, Buffer *out) {
   size_t printed = 0;
   if (digits) {
     for (; digits; digits /= 10) out->push_front(digits % 10 + '0');
@@ -1158,10 +1146,8 @@ size_t PrintIntegralDigits(Int digits, Buffer* out) {
 }
 
 // Back out 'extra_digits' digits and round up if necessary.
-void RemoveExtraPrecision(size_t extra_digits,
-                          bool has_leftover_value,
-                          Buffer* out,
-                          int* exp_out) {
+void RemoveExtraPrecision(size_t extra_digits, bool has_leftover_value,
+                          Buffer *out, int *exp_out) {
   // Back out the extra digits
   out->end -= extra_digits;
 
@@ -1187,11 +1173,8 @@ void RemoveExtraPrecision(size_t extra_digits,
 // This will not include the exponent, which will be returned in 'exp_out' for
 // Precision mode.
 template <typename Int, typename Float, FormatStyle mode>
-bool FloatToBufferImpl(Int int_mantissa,
-                       int exp,
-                       size_t precision,
-                       Buffer* out,
-                       int* exp_out) {
+bool FloatToBufferImpl(Int int_mantissa, int exp, size_t precision, Buffer *out,
+                       int *exp_out) {
   assert((CanFitMantissa<Float, Int>()));
 
   const int int_bits = std::numeric_limits<Int>::digits;
@@ -1283,10 +1266,8 @@ bool FloatToBufferImpl(Int int_mantissa,
 }
 
 template <FormatStyle mode, typename Float>
-bool FloatToBuffer(Decomposed<Float> decomposed,
-                   size_t precision,
-                   Buffer* out,
-                   int* exp) {
+bool FloatToBuffer(Decomposed<Float> decomposed, size_t precision, Buffer *out,
+                   int *exp) {
   if (precision > kMaxFixedPrecision) return false;
 
   // Try with uint64_t.

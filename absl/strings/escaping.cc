@@ -62,8 +62,8 @@ inline bool IsSurrogate(char32_t c, absl::string_view src,
                         std::string* absl_nullable error) {
   if (c >= 0xD800 && c <= 0xDFFF) {
     if (error) {
-      *error = absl::StrCat("invalid surrogate character (0xD800-DFFF): \\",
-                            src);
+      *error =
+          absl::StrCat("invalid surrogate character (0xD800-DFFF): \\", src);
     }
     return true;
   }
@@ -108,17 +108,39 @@ bool CUnescapeInternal(absl::string_view src, bool leave_nulls_escaped,
         return false;
       }
       switch (src[p]) {
-        case 'a':  (*dst)[d++] = '\a';  break;
-        case 'b':  (*dst)[d++] = '\b';  break;
-        case 'f':  (*dst)[d++] = '\f';  break;
-        case 'n':  (*dst)[d++] = '\n';  break;
-        case 'r':  (*dst)[d++] = '\r';  break;
-        case 't':  (*dst)[d++] = '\t';  break;
-        case 'v':  (*dst)[d++] = '\v';  break;
-        case '\\': (*dst)[d++] = '\\';  break;
-        case '?':  (*dst)[d++] = '\?';  break;
-        case '\'': (*dst)[d++] = '\'';  break;
-        case '"':  (*dst)[d++] = '\"';  break;
+        case 'a':
+          (*dst)[d++] = '\a';
+          break;
+        case 'b':
+          (*dst)[d++] = '\b';
+          break;
+        case 'f':
+          (*dst)[d++] = '\f';
+          break;
+        case 'n':
+          (*dst)[d++] = '\n';
+          break;
+        case 'r':
+          (*dst)[d++] = '\r';
+          break;
+        case 't':
+          (*dst)[d++] = '\t';
+          break;
+        case 'v':
+          (*dst)[d++] = '\v';
+          break;
+        case '\\':
+          (*dst)[d++] = '\\';
+          break;
+        case '?':
+          (*dst)[d++] = '\?';
+          break;
+        case '\'':
+          (*dst)[d++] = '\'';
+          break;
+        case '"':
+          (*dst)[d++] = '\"';
+          break;
         case '0':
         case '1':
         case '2':
@@ -162,7 +184,7 @@ bool CUnescapeInternal(absl::string_view src, bool leave_nulls_escaped,
             }
             return false;
           } else if (!absl::ascii_isxdigit(
-              static_cast<unsigned char>(src[p + 1]))) {
+                         static_cast<unsigned char>(src[p + 1]))) {
             if (error != nullptr) {
               *error = "\\x cannot be followed by a non-hex digit";
             }
@@ -314,12 +336,36 @@ std::string CEscapeInternal(absl::string_view src, bool use_hex,
   for (char c : src) {
     bool is_hex_escape = false;
     switch (c) {
-      case '\n': dest.append("\\" "n"); break;
-      case '\r': dest.append("\\" "r"); break;
-      case '\t': dest.append("\\" "t"); break;
-      case '\"': dest.append("\\" "\""); break;
-      case '\'': dest.append("\\" "'"); break;
-      case '\\': dest.append("\\" "\\"); break;
+      case '\n':
+        dest.append(
+            "\\"
+            "n");
+        break;
+      case '\r':
+        dest.append(
+            "\\"
+            "r");
+        break;
+      case '\t':
+        dest.append(
+            "\\"
+            "t");
+        break;
+      case '\"':
+        dest.append(
+            "\\"
+            "\"");
+        break;
+      case '\'':
+        dest.append(
+            "\\"
+            "'");
+        break;
+      case '\\':
+        dest.append(
+            "\\"
+            "\\");
+        break;
       default: {
         // Note that if we emit \xNN and the src character after that is a hex
         // digit then that digit must be escaped too to prevent it being
@@ -329,7 +375,9 @@ std::string CEscapeInternal(absl::string_view src, bool use_hex,
             (!absl::ascii_isprint(uc) ||
              (last_hex_escape && absl::ascii_isxdigit(uc)))) {
           if (use_hex) {
-            dest.append("\\" "x");
+            dest.append(
+                "\\"
+                "x");
             dest.push_back(numbers_internal::kHexChar[uc / 16]);
             dest.push_back(numbers_internal::kHexChar[uc % 16]);
             is_hex_escape = true;

@@ -114,9 +114,8 @@ struct common_policy_traits {
   // node_slot_policy).
   template <class Alloc, class P = Policy>
   static auto transfer_impl(Alloc* alloc, slot_type* new_slot,
-                            slot_type* old_slot,
-                            Rank2) -> decltype(P::transfer(alloc, new_slot,
-                                                           old_slot)) {
+                            slot_type* old_slot, Rank2)
+      -> decltype(P::transfer(alloc, new_slot, old_slot)) {
     return P::transfer(alloc, new_slot, old_slot);
   }
 

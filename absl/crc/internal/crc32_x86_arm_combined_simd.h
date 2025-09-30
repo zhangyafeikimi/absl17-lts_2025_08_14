@@ -247,11 +247,10 @@ inline V128 V128_PMul10(const V128 l, const V128 r) {
 
 inline V128 V128_Xor(const V128 l, const V128 r) { return veorq_u64(l, r); }
 
-inline V128 V128_From64WithZeroFill(const uint64_t r){
+inline V128 V128_From64WithZeroFill(const uint64_t r) {
   constexpr uint64x2_t kZero = {0, 0};
   return vsetq_lane_u64(r, kZero, 0);
 }
-
 
 template <int imm>
 inline int V128_Extract32(const V128 l) {

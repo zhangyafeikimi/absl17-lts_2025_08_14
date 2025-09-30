@@ -41,8 +41,7 @@ uint8_t CappedDamerauLevenshteinDistance(absl::string_view s1,
   if (s1.size() + _cutoff < s2.size() || s2.size() > MAX_SIZE)
     return cutoff_plus_1;
 
-  if (s1.empty())
-    return static_cast<uint8_t>(s2.size());
+  if (s1.empty()) return static_cast<uint8_t>(s2.size());
 
   // Lower diagonal bound: y = x - lower_diag
   const uint8_t lower_diag =

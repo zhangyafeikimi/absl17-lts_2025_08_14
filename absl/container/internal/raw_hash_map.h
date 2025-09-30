@@ -269,7 +269,7 @@ class raw_hash_map : public raw_hash_set<Policy, Hash, Eq, Alloc> {
   }
 
   template <class K = key_type, class P = Policy>
-  MappedReference<P> at(const key_arg<K>& key) ABSL_ATTRIBUTE_LIFETIME_BOUND {
+  MappedReference<P> at(const key_arg<K> &key) ABSL_ATTRIBUTE_LIFETIME_BOUND {
     auto it = this->find(key);
     if (it == this->end()) {
       base_internal::ThrowStdOutOfRange(
@@ -279,7 +279,7 @@ class raw_hash_map : public raw_hash_set<Policy, Hash, Eq, Alloc> {
   }
 
   template <class K = key_type, class P = Policy>
-  MappedConstReference<P> at(const key_arg<K>& key) const
+  MappedConstReference<P> at(const key_arg<K> &key) const
       ABSL_ATTRIBUTE_LIFETIME_BOUND {
     auto it = this->find(key);
     if (it == this->end()) {
@@ -326,7 +326,7 @@ class raw_hash_map : public raw_hash_set<Policy, Hash, Eq, Alloc> {
 
  private:
   template <class K, class V>
-  std::pair<iterator, bool> insert_or_assign_impl(K&& k, V&& v)
+  std::pair<iterator, bool> insert_or_assign_impl(K &&k, V &&v)
       ABSL_ATTRIBUTE_LIFETIME_BOUND {
     auto res = this->find_or_prepare_insert(k);
     if (res.second) {
@@ -338,7 +338,7 @@ class raw_hash_map : public raw_hash_set<Policy, Hash, Eq, Alloc> {
   }
 
   template <class K = key_type, class... Args>
-  std::pair<iterator, bool> try_emplace_impl(K&& k, Args&&... args)
+  std::pair<iterator, bool> try_emplace_impl(K &&k, Args &&...args)
       ABSL_ATTRIBUTE_LIFETIME_BOUND {
     auto res = this->find_or_prepare_insert(k);
     if (res.second) {

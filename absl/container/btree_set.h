@@ -57,7 +57,7 @@
 #define ABSL_CONTAINER_BTREE_SET_H_
 
 #include "absl/base/attributes.h"
-#include "absl/container/internal/btree.h"  // IWYU pragma: export
+#include "absl/container/internal/btree.h"            // IWYU pragma: export
 #include "absl/container/internal/btree_container.h"  // IWYU pragma: export
 
 namespace absl {
@@ -762,7 +762,7 @@ void swap(btree_multiset<K, C, A> &x, btree_multiset<K, C, A> &y) {
 // Returns the number of erased elements.
 template <typename K, typename C, typename A, typename Pred>
 typename btree_multiset<K, C, A>::size_type erase_if(
-   btree_multiset<K, C, A> & set, Pred pred) {
+    btree_multiset<K, C, A> &set, Pred pred) {
   return container_internal::btree_access::erase_if(set, std::move(pred));
 }
 

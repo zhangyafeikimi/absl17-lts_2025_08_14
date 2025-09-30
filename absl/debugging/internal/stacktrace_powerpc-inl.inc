@@ -23,11 +23,12 @@
 
 #include "absl/debugging/internal/addresses.h"
 #if defined(__linux__)
-#include <asm/ptrace.h>   // for PT_NIP.
-#include <ucontext.h>     // for ucontext_t
+#include <asm/ptrace.h>  // for PT_NIP.
+#include <ucontext.h>    // for ucontext_t
 #endif
 
 #include <unistd.h>
+
 #include <cassert>
 #include <cstdint>
 #include <cstdio>
@@ -35,9 +36,9 @@
 #include "absl/base/attributes.h"
 #include "absl/base/optimization.h"
 #include "absl/base/port.h"
-#include "absl/debugging/stacktrace.h"
 #include "absl/debugging/internal/address_is_readable.h"
 #include "absl/debugging/internal/vdso_support.h"  // a no-op on non-elf or non-glibc systems
+#include "absl/debugging/stacktrace.h"
 
 // Given a stack pointer, return the saved link register value.
 // Note that this is the link register for a callee.
@@ -66,12 +67,14 @@ static inline void **StacktracePowerPCGetLRPtr(void **sp) {
 // stackframe, or return null if no stackframe can be found. Perform sanity
 // checks (the strictness of which is controlled by the boolean parameter
 // "STRICT_UNWINDING") to reduce the chance that a bad pointer is returned.
-template<bool STRICT_UNWINDING, bool IS_WITH_CONTEXT>
-ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS  // May read random elements from stack.
-ABSL_ATTRIBUTE_NO_SANITIZE_MEMORY   // May read random elements from stack.
-ABSL_ATTRIBUTE_NO_SANITIZE_THREAD   // May read random elements from stack.
-static void **NextStackFrame(void **old_sp, const void *uc) {
-  void **new_sp = (void **) *old_sp;
+template <bool STRICT_UNWINDING, bool IS_WITH_CONTEXT>
+ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS     // May read random elements from stack.
+    ABSL_ATTRIBUTE_NO_SANITIZE_MEMORY  // May read random elements from stack.
+        ABSL_ATTRIBUTE_NO_SANITIZE_THREAD  // May read random elements from
+                                           // stack.
+    static void **
+    NextStackFrame(void **old_sp, const void *uc) {
+  void **new_sp = (void **)*old_sp;
   enum { kStackAlignment = 16 };
 
   // Check that the transition from frame pointer old_sp to frame
@@ -87,14 +90,17 @@ static void **NextStackFrame(void **old_sp, const void *uc) {
     // (alternate-signal-stacks for example).
     if (new_sp == old_sp) return nullptr;
     // And allow frames upto about 1MB.
-    if ((new_sp > old_sp)
-        && ((uintptr_t)new_sp - (uintptr_t)old_sp > 1000000)) return nullptr;
+    if ((new_sp > old_sp) && ((uintptr_t)new_sp - (uintptr_t)old_sp > 1000000))
+      return nullptr;
   }
   if ((uintptr_t)new_sp % kStackAlignment != 0) return nullptr;
 
 #if defined(__linux__)
   enum StackTraceKernelSymbolStatus {
-      kNotInitialized = 0, kAddressValid, kAddressInvalid };
+    kNotInitialized = 0,
+    kAddressValid,
+    kAddressInvalid
+  };
 
   if (IS_WITH_CONTEXT && uc != nullptr) {
     static StackTraceKernelSymbolStatus kernel_symbol_status =
@@ -129,8 +135,8 @@ static void **NextStackFrame(void **old_sp, const void *uc) {
 
     if (new_sp != nullptr && kernel_symbol_status == kAddressValid &&
         *StacktracePowerPCGetLRPtr(new_sp) == kernel_sigtramp_rt64_address) {
-      const ucontext_t* signal_context =
-          reinterpret_cast<const ucontext_t*>(uc);
+      const ucontext_t *signal_context =
+          reinterpret_cast<const ucontext_t *>(uc);
       void **const sp_before_signal =
 #if defined(__PPC64__)
           reinterpret_cast<void **>(signal_context->uc_mcontext.gp_regs[PT_R1]);
@@ -163,21 +169,22 @@ ABSL_ATTRIBUTE_NOINLINE static void AbslStacktracePowerPCDummyFunction() {
 }
 
 template <bool IS_STACK_FRAMES, bool IS_WITH_CONTEXT>
-ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS  // May read random elements from stack.
-ABSL_ATTRIBUTE_NO_SANITIZE_MEMORY   // May read random elements from stack.
-ABSL_ATTRIBUTE_NO_SANITIZE_THREAD   // May read random elements from stack.
-static int UnwindImpl(void **result, uintptr_t *frames, int *sizes,
-                      int max_depth, int skip_count, const void *ucp,
-                      int *min_dropped_frames) {
+ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS     // May read random elements from stack.
+    ABSL_ATTRIBUTE_NO_SANITIZE_MEMORY  // May read random elements from stack.
+        ABSL_ATTRIBUTE_NO_SANITIZE_THREAD  // May read random elements from
+                                           // stack.
+    static int
+    UnwindImpl(void **result, uintptr_t *frames, int *sizes, int max_depth,
+               int skip_count, const void *ucp, int *min_dropped_frames) {
   void **sp;
   // Apple macOS uses an old version of gnu as -- both Darwin 7.9.0 (Panther)
   // and Darwin 8.8.1 (Tiger) use as 1.38.  This means we have to use a
   // different asm syntax.  I don't know quite the best way to discriminate
   // systems using the old as from the new one; I've gone with __APPLE__.
 #ifdef __APPLE__
-  __asm__ volatile ("mr %0,r1" : "=r" (sp));
+  __asm__ volatile("mr %0,r1" : "=r"(sp));
 #else
-  __asm__ volatile ("mr %0,1" : "=r" (sp));
+  __asm__ volatile("mr %0,1" : "=r"(sp));
 #endif
 
   // On PowerPC, the "Link Register" or "Link Record" (LR), is a stack
@@ -259,9 +266,7 @@ static int UnwindImpl(void **result, uintptr_t *frames, int *sizes,
 namespace absl {
 ABSL_NAMESPACE_BEGIN
 namespace debugging_internal {
-bool StackTraceWorksForTest() {
-  return true;
-}
+bool StackTraceWorksForTest() { return true; }
 }  // namespace debugging_internal
 ABSL_NAMESPACE_END
 }  // namespace absl

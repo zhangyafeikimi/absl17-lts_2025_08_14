@@ -59,5 +59,4 @@ size_t GetEstimatedFairShareMemoryUsage(const CordRep* absl_nonnull rep);
 ABSL_NAMESPACE_END
 }  // namespace absl
 
-
 #endif  // ABSL_STRINGS_CORD_ANALYSIS_H_

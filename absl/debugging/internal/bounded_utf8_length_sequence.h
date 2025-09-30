@@ -50,8 +50,8 @@ class BoundedUtf8LengthSequence {
   // excess positions in the range count 1 apiece.
   //
   // REQUIRES: index < max_elements and 1 <= utf8_length <= 4.
-  uint32_t InsertAndReturnSumOfPredecessors(
-      uint32_t index, uint32_t utf8_length) {
+  uint32_t InsertAndReturnSumOfPredecessors(uint32_t index,
+                                            uint32_t utf8_length) {
     // The caller shouldn't pass out-of-bounds inputs, but if it does happen,
     // clamp the values and try to continue.  If we're being called from a
     // signal handler, the last thing we want to do is crash.  Emitting
@@ -59,7 +59,7 @@ class BoundedUtf8LengthSequence {
     if (index >= max_elements) index = max_elements - 1;
     if (utf8_length == 0 || utf8_length > 4) utf8_length = 1;
 
-    const uint32_t word_index = index/32;
+    const uint32_t word_index = index / 32;
     const uint32_t bit_index = 2 * (index % 32);
     const uint64_t ones_bit = uint64_t{1} << bit_index;
 
@@ -91,13 +91,12 @@ class BoundedUtf8LengthSequence {
 
     // Now insert utf8_length's representation, shifting successors up one
     // place.
-    for (uint32_t j = max_elements/32 - 1; j > word_index; --j) {
+    for (uint32_t j = max_elements / 32 - 1; j > word_index; --j) {
       rep_[j] = (rep_[j] << 2) | (rep_[j - 1] >> 62);
     }
-    rep_[word_index] =
-        (rep_[word_index] & lower_seminibbles_mask) |
-        (uint64_t{utf8_length - 1} << bit_index) |
-        ((rep_[word_index] & higher_seminibbles_mask) << 2);
+    rep_[word_index] = (rep_[word_index] & lower_seminibbles_mask) |
+                       (uint64_t{utf8_length - 1} << bit_index) |
+                       ((rep_[word_index] & higher_seminibbles_mask) << 2);
 
     return sum_of_predecessors;
   }
@@ -116,7 +115,7 @@ class BoundedUtf8LengthSequence {
   // other examples) would yield this value of rep_.
   static_assert(max_elements > 0 && max_elements % 32 == 0,
                 "max_elements must be a positive multiple of 32");
-  uint64_t rep_[max_elements/32] = {};
+  uint64_t rep_[max_elements / 32] = {};
 };
 
 }  // namespace debugging_internal

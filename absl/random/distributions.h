@@ -60,7 +60,7 @@
 #include "absl/random/internal/uniform_helper.h"  // IWYU pragma: export
 #include "absl/random/log_uniform_int_distribution.h"
 #include "absl/random/poisson_distribution.h"
-#include "absl/random/uniform_int_distribution.h"  // IWYU pragma: export
+#include "absl/random/uniform_int_distribution.h"   // IWYU pragma: export
 #include "absl/random/uniform_real_distribution.h"  // IWYU pragma: export
 #include "absl/random/zipf_distribution.h"
 

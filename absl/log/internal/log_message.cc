@@ -166,7 +166,7 @@ struct LogMessage::LogMessageData final {
   bool is_perror;
 
   // Extra `LogSink`s to log to, in addition to `global_sinks`.
-  absl::InlinedVector<absl::LogSink* absl_nonnull, 16> extra_sinks;
+  absl::InlinedVector<absl::LogSink * absl_nonnull, 16> extra_sinks;
   // If true, log to `extra_sinks` but not to `global_sinks` or hardcoded
   // non-sink targets (e.g. stderr, log files).
   bool extra_sinks_only;
@@ -267,7 +267,7 @@ void LogMessage::LogMessageData::FinalizeEncodingAndFormat() {
   }
   auto chars_written =
       static_cast<size_t>(string_remaining.data() - string_buf.data());
-    string_buf[chars_written++] = '\n';
+  string_buf[chars_written++] = '\n';
   string_buf[chars_written++] = '\0';
   entry.text_message_with_prefix_and_newline_and_nul_ =
       absl::MakeSpan(string_buf).subspan(0, chars_written);

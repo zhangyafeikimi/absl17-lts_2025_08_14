@@ -21,7 +21,7 @@
 
 // MSVC header dbghelp.h has a warning for an ignored typedef.
 #pragma warning(push)
-#pragma warning(disable:4091)
+#pragma warning(disable : 4091)
 #include <dbghelp.h>
 #pragma warning(pop)
 
@@ -89,8 +89,7 @@ bool Symbolize(const void* pc, char* out, int out_size) {
   if (out[out_size_t - 1] != '\0') {
     // strncpy() does not '\0' terminate when it truncates.
     static constexpr char kEllipsis[] = "...";
-    size_t ellipsis_size =
-        std::min(sizeof(kEllipsis) - 1, out_size_t - 1);
+    size_t ellipsis_size = std::min(sizeof(kEllipsis) - 1, out_size_t - 1);
     memcpy(out + out_size_t - ellipsis_size - 1, kEllipsis, ellipsis_size);
     out[out_size_t - 1] = '\0';
   }

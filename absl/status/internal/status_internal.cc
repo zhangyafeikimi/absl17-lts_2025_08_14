@@ -173,7 +173,6 @@ bool StatusRep::operator==(const StatusRep& other) const {
   // Payloads can be ordered differently, so we can't just compare payload
   // vectors.
   for (const auto& payload : *larger_payloads) {
-
     bool found = false;
     for (const auto& other_payload : *smaller_payloads) {
       if (payload.type_url == other_payload.type_url) {

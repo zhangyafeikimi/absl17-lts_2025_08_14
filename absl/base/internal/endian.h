@@ -34,10 +34,8 @@ constexpr uint64_t gbswap_64(uint64_t x) {
 #if ABSL_HAVE_BUILTIN(__builtin_bswap64) || defined(__GNUC__)
   return __builtin_bswap64(x);
 #else
-  return (((x & uint64_t{0xFF}) << 56) |
-          ((x & uint64_t{0xFF00}) << 40) |
-          ((x & uint64_t{0xFF0000}) << 24) |
-          ((x & uint64_t{0xFF000000}) << 8) |
+  return (((x & uint64_t{0xFF}) << 56) | ((x & uint64_t{0xFF00}) << 40) |
+          ((x & uint64_t{0xFF0000}) << 24) | ((x & uint64_t{0xFF000000}) << 8) |
           ((x & uint64_t{0xFF00000000}) >> 8) |
           ((x & uint64_t{0xFF0000000000}) >> 24) |
           ((x & uint64_t{0xFF000000000000}) >> 40) |
@@ -49,10 +47,8 @@ constexpr uint32_t gbswap_32(uint32_t x) {
 #if ABSL_HAVE_BUILTIN(__builtin_bswap32) || defined(__GNUC__)
   return __builtin_bswap32(x);
 #else
-  return (((x & uint32_t{0xFF}) << 24) |
-          ((x & uint32_t{0xFF00}) << 8) |
-          ((x & uint32_t{0xFF0000}) >> 8) |
-          ((x & uint32_t{0xFF000000}) >> 24));
+  return (((x & uint32_t{0xFF}) << 24) | ((x & uint32_t{0xFF00}) << 8) |
+          ((x & uint32_t{0xFF0000}) >> 8) | ((x & uint32_t{0xFF000000}) >> 24));
 #endif
 }
 
@@ -60,8 +56,7 @@ constexpr uint16_t gbswap_16(uint16_t x) {
 #if ABSL_HAVE_BUILTIN(__builtin_bswap16) || defined(__GNUC__)
   return __builtin_bswap16(x);
 #else
-  return (((x & uint16_t{0xFF}) << 8) |
-          ((x & uint16_t{0xFF00}) >> 8));
+  return (((x & uint16_t{0xFF}) << 8) | ((x & uint16_t{0xFF00}) >> 8));
 #endif
 }
 

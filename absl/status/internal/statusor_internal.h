@@ -39,8 +39,8 @@ template <typename T, typename U, typename = void>
 struct HasConversionOperatorToStatusOr : std::false_type {};
 
 template <typename T, typename U>
-void test(char (*absl_nullable)[sizeof(
-    std::declval<U>().operator absl::StatusOr<T>())]);
+void test(char (
+    *absl_nullable)[sizeof(std::declval<U>().operator absl::StatusOr<T>())]);
 
 template <typename T, typename U>
 struct HasConversionOperatorToStatusOr<T, U, decltype(test<T, U>(0))>
@@ -53,8 +53,8 @@ struct IsEqualityComparable : std::false_type {};
 template <typename T>
 struct IsEqualityComparable<
     T, std::enable_if_t<std::is_convertible<
-           decltype(std::declval<T>() == std::declval<T>()),
-           bool>::value>> : std::true_type {};
+           decltype(std::declval<T>() == std::declval<T>()), bool>::value>>
+    : std::true_type {};
 
 // Detects whether `T` is constructible or convertible from `StatusOr<U>`.
 template <typename T, typename U>
@@ -517,9 +517,7 @@ struct OperatorBase<T&> {
     return self().data_;
   }
 
-  T* absl_nonnull operator->() const {
-    return std::addressof(**this);
-  }
+  T* absl_nonnull operator->() const { return std::addressof(**this); }
 };
 
 // Helper base classes to allow implicitly deleted constructors and assignment

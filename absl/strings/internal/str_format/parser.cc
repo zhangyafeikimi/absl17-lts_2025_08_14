@@ -17,10 +17,10 @@
 #include <assert.h>
 #include <string.h>
 #include <wchar.h>
-#include <cctype>
-#include <cstdint>
 
 #include <algorithm>
+#include <cctype>
+#include <cstdint>
 #include <initializer_list>
 #include <limits>
 #include <ostream>
@@ -66,7 +66,7 @@ std::string LengthModToString(LengthMod v) {
 }
 
 struct ParsedFormatBase::ParsedFormatConsumer {
-  explicit ParsedFormatConsumer(ParsedFormatBase *parsedformat)
+  explicit ParsedFormatConsumer(ParsedFormatBase* parsedformat)
       : parsed(parsedformat), data_pos(parsedformat->data_.get()) {}
 
   bool Append(string_view s) {
@@ -84,7 +84,7 @@ struct ParsedFormatBase::ParsedFormatConsumer {
     return true;
   }
 
-  bool ConvertOne(const UnboundConversion &conv, string_view s) {
+  bool ConvertOne(const UnboundConversion& conv, string_view s) {
     size_t text_end = AppendText(s);
     parsed->items_.push_back({true, text_end, conv});
     return true;
@@ -96,7 +96,7 @@ struct ParsedFormatBase::ParsedFormatConsumer {
     return static_cast<size_t>(data_pos - parsed->data_.get());
   }
 
-  ParsedFormatBase *parsed;
+  ParsedFormatBase* parsed;
   char* data_pos;
 };
 
@@ -119,9 +119,9 @@ bool ParsedFormatBase::MatchesConversions(
     used.insert(pos);
     return true;
   };
-  for (const ConversionItem &item : items_) {
+  for (const ConversionItem& item : items_) {
     if (!item.is_conversion) continue;
-    auto &conv = item.conv;
+    auto& conv = item.conv;
     if (conv.precision.is_from_arg() &&
         !add_if_valid_conv(conv.precision.get_from_arg(), '*'))
       return false;

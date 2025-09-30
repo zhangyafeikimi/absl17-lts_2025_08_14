@@ -92,8 +92,9 @@ class ABSL_ATTRIBUTE_WARN_UNUSED InlinedVector {
       inlined_vector_internal::DefaultValueAdapter<TheA>;
 
   template <typename Iterator>
-  using EnableIfAtLeastForwardIterator = std::enable_if_t<
-      base_internal::IsAtLeastForwardIterator<Iterator>::value, int>;
+  using EnableIfAtLeastForwardIterator =
+      std::enable_if_t<base_internal::IsAtLeastForwardIterator<Iterator>::value,
+                       int>;
   template <typename Iterator>
   using DisableIfAtLeastForwardIterator = std::enable_if_t<
       !base_internal::IsAtLeastForwardIterator<Iterator>::value, int>;

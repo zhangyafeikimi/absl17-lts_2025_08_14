@@ -61,7 +61,7 @@ namespace base_internal {
 
 class LowLevelAlloc {
  public:
-  struct Arena;       // an arena from which memory may be allocated
+  struct Arena;  // an arena from which memory may be allocated
 
   // Returns a pointer to a block of at least "request" bytes
   // that have been newly allocated from the specific arena.
@@ -117,7 +117,7 @@ class LowLevelAlloc {
   static Arena *DefaultArena();
 
  private:
-  LowLevelAlloc();      // no instances
+  LowLevelAlloc();  // no instances
 };
 
 // Returns a global async-signal-safe arena for LowLevelAlloc.

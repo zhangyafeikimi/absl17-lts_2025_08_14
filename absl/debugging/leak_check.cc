@@ -36,9 +36,7 @@ ABSL_NAMESPACE_BEGIN
 bool HaveLeakSanitizer() { return true; }
 
 #if ABSL_HAVE_ATTRIBUTE_WEAK
-bool LeakCheckerIsActive() {
-  return __lsan_is_turned_off() == 0;
-}
+bool LeakCheckerIsActive() { return __lsan_is_turned_off() == 0; }
 #else
 bool LeakCheckerIsActive() { return true; }
 #endif
@@ -62,9 +60,9 @@ namespace absl {
 ABSL_NAMESPACE_BEGIN
 bool HaveLeakSanitizer() { return false; }
 bool LeakCheckerIsActive() { return false; }
-void DoIgnoreLeak(const void*) { }
-void RegisterLivePointers(const void*, size_t) { }
-void UnRegisterLivePointers(const void*, size_t) { }
+void DoIgnoreLeak(const void*) {}
+void RegisterLivePointers(const void*, size_t) {}
+void UnRegisterLivePointers(const void*, size_t) {}
 LeakCheckDisabler::LeakCheckDisabler() = default;
 LeakCheckDisabler::~LeakCheckDisabler() = default;
 ABSL_NAMESPACE_END

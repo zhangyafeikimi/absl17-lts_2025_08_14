@@ -31,7 +31,6 @@
 //
 // See below for complete details.
 
-
 #ifndef ABSL_BASE_NO_DESTRUCTOR_H_
 #define ABSL_BASE_NO_DESTRUCTOR_H_
 
@@ -101,7 +100,8 @@ ABSL_NAMESPACE_BEGIN
 // objects still need to worry about initialization order, so such use is not
 // recommended, strongly discouraged by the Google C++ Style Guide, and outright
 // banned in Chromium.
-// See https://google.github.io/styleguide/cppguide.html#Static_and_Global_Variables
+// See
+// https://google.github.io/styleguide/cppguide.html#Static_and_Global_Variables
 //
 //    // Global or namespace scope.
 //    absl::NoDestructor<MyRegistry> reg{"foo", "bar", 8008};
@@ -125,8 +125,7 @@ class NoDestructor {
   //   static NoDestructor<std::array<string, 3>> x{{{"1", "2", "3"}}};
   //   static NoDestructor<std::vector<int>> x{{1, 2, 3}};
   explicit constexpr NoDestructor(const T& x) : impl_(x) {}
-  explicit constexpr NoDestructor(T&& x)
-      : impl_(std::move(x)) {}
+  explicit constexpr NoDestructor(T&& x) : impl_(std::move(x)) {}
 
   // No copying.
   NoDestructor(const NoDestructor&) = delete;

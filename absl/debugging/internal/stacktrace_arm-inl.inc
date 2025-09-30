@@ -35,9 +35,9 @@
 // stackframe, or return nullptr if no stackframe can be found. Perform sanity
 // checks (the strictness of which is controlled by the boolean parameter
 // "STRICT_UNWINDING") to reduce the chance that a bad pointer is returned.
-template<bool STRICT_UNWINDING>
+template <bool STRICT_UNWINDING>
 static void **NextStackFrame(void **old_sp) {
-  void **new_sp = (void**) old_sp[-1];
+  void **new_sp = (void **)old_sp[-1];
 
   // Check that the transition from frame pointer old_sp to frame
   // pointer new_sp isn't clearly bogus
@@ -52,8 +52,8 @@ static void **NextStackFrame(void **old_sp) {
     // (alternate-signal-stacks for example).
     if (new_sp == old_sp) return nullptr;
     // And allow frames upto about 1MB.
-    if ((new_sp > old_sp)
-        && ((uintptr_t)new_sp - (uintptr_t)old_sp > 1000000)) return nullptr;
+    if ((new_sp > old_sp) && ((uintptr_t)new_sp - (uintptr_t)old_sp > 1000000))
+      return nullptr;
   }
   if ((uintptr_t)new_sp & (sizeof(void *) - 1)) return nullptr;
   return new_sp;
@@ -64,7 +64,7 @@ static void **NextStackFrame(void **old_sp) {
 void StacktraceArmDummyFunction() __attribute__((noinline));
 void StacktraceArmDummyFunction() { __asm__ volatile(""); }
 #else
-# error StacktraceArmDummyFunction() needs to be ported to this platform.
+#error StacktraceArmDummyFunction() needs to be ported to this platform.
 #endif
 
 template <bool IS_STACK_FRAMES, bool IS_WITH_CONTEXT>
@@ -72,9 +72,9 @@ static int UnwindImpl(void **result, uintptr_t *frames, int *sizes,
                       int max_depth, int skip_count, const void * /* ucp */,
                       int *min_dropped_frames) {
 #ifdef __GNUC__
-  void **sp = reinterpret_cast<void**>(__builtin_frame_address(0));
+  void **sp = reinterpret_cast<void **>(__builtin_frame_address(0));
 #else
-# error reading stack point not yet supported on this platform.
+#error reading stack point not yet supported on this platform.
 #endif
 
   // On ARM, the return address is stored in the link register (r14).
@@ -138,9 +138,7 @@ static int UnwindImpl(void **result, uintptr_t *frames, int *sizes,
 namespace absl {
 ABSL_NAMESPACE_BEGIN
 namespace debugging_internal {
-bool StackTraceWorksForTest() {
-  return false;
-}
+bool StackTraceWorksForTest() { return false; }
 }  // namespace debugging_internal
 ABSL_NAMESPACE_END
 }  // namespace absl

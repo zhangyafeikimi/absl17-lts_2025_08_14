@@ -67,9 +67,7 @@ CrcCordState& CrcCordState::operator=(CrcCordState&& other) {
   return *this;
 }
 
-CrcCordState::~CrcCordState() {
-  Unref(refcounted_rep_);
-}
+CrcCordState::~CrcCordState() { Unref(refcounted_rep_); }
 
 crc32c_t CrcCordState::Checksum() const {
   if (rep().prefix_crc.empty()) {

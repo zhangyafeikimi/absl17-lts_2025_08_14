@@ -1155,18 +1155,10 @@ class btree_iterator : private btree_iterator_generation_info {
         node_(other.node_),
         position_(other.position_) {}
 
-  bool operator==(const iterator &other) const {
-    return Equals(other);
-  }
-  bool operator==(const const_iterator &other) const {
-    return Equals(other);
-  }
-  bool operator!=(const iterator &other) const {
-    return !Equals(other);
-  }
-  bool operator!=(const const_iterator &other) const {
-    return !Equals(other);
-  }
+  bool operator==(const iterator &other) const { return Equals(other); }
+  bool operator==(const const_iterator &other) const { return Equals(other); }
+  bool operator!=(const iterator &other) const { return !Equals(other); }
+  bool operator!=(const const_iterator &other) const { return !Equals(other); }
 
   // Returns n such that n calls to ++other yields *this.
   // Precondition: n exists.
@@ -1550,8 +1542,7 @@ class btree {
 
   // Insert a range of values into the btree.
   template <typename InputIterator>
-  void insert_iterator_multi(InputIterator b,
-                             InputIterator e);
+  void insert_iterator_multi(InputIterator b, InputIterator e);
 
   // Erase the specified iterator from the btree. The iterator must be valid
   // (i.e. not equal to end()).  Return an iterator pointing to the node after
@@ -2151,7 +2142,7 @@ auto btree_iterator<N, R, P>::distance_slow(const_iterator other) const
 
 template <typename N, typename R, typename P>
 void btree_iterator<N, R, P>::increment_slow() {
-  N* node = node_;
+  N *node = node_;
   int position = position_;
   if (node->is_leaf()) {
     assert(position >= node->finish());
@@ -2177,7 +2168,7 @@ void btree_iterator<N, R, P>::increment_slow() {
 
 template <typename N, typename R, typename P>
 void btree_iterator<N, R, P>::decrement_slow() {
-  N* node = node_;
+  N *node = node_;
   int position = position_;
   if (node->is_leaf()) {
     assert(position <= -1);

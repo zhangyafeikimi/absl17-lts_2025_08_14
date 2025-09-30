@@ -108,8 +108,8 @@ Status::Status(absl::StatusCode code, absl::string_view msg)
   }
 }
 
-status_internal::StatusRep* absl_nonnull Status::PrepareToModify(
-    uintptr_t rep) {
+status_internal::StatusRep* absl_nonnull
+Status::PrepareToModify(uintptr_t rep) {
   if (IsInlined(rep)) {
     return new status_internal::StatusRep(InlinedRepToCode(rep),
                                           absl::string_view(), nullptr);

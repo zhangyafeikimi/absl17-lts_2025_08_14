@@ -65,7 +65,7 @@ class ConvertibleToStringView {
   ConvertibleToStringView(char* s) : value_(s) {  // NOLINT(runtime/explicit)
     assert(s != nullptr);
   }
-  ConvertibleToStringView(absl::string_view s)     // NOLINT(runtime/explicit)
+  ConvertibleToStringView(absl::string_view s)  // NOLINT(runtime/explicit)
       : value_(s) {}
   ConvertibleToStringView(const std::string& s)  // NOLINT(runtime/explicit)
       : value_(s) {}
@@ -203,7 +203,7 @@ template <typename T>
 std::true_type IsInitializerListDispatch(std::initializer_list<T>*);
 template <typename T>
 struct IsInitializerList
-    : decltype(IsInitializerListDispatch(static_cast<T*>(nullptr))) {};
+    : decltype(IsInitializerListDispatch(static_cast<T*>(nullptr))){};
 
 // A SplitterIsConvertibleTo<C>::type alias exists iff the specified condition
 // is true for type 'C'.

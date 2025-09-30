@@ -36,8 +36,8 @@
 #include "absl/base/internal/endian.h"
 #include "absl/base/internal/raw_logging.h"
 #include "absl/base/macros.h"
-#include "absl/base/optimization.h"
 #include "absl/base/nullability.h"
+#include "absl/base/optimization.h"
 #include "absl/container/inlined_vector.h"
 #include "absl/crc/crc32c.h"
 #include "absl/crc/internal/crc_cord_state.h"
@@ -139,8 +139,7 @@ static CordRep* absl_nonnull CordRepFromString(std::string&& src) {
       // String is short: copy data to avoid external block overhead.
       src.size() <= kMaxBytesToCopy ||
       // String is wasteful: copy data to avoid pinning too much unused memory.
-      src.size() < src.capacity() / 2
-  ) {
+      src.size() < src.capacity() / 2) {
     return NewTree(src.data(), src.size(), 0);
   }
 
@@ -875,8 +874,8 @@ void Cord::SetExpectedChecksum(uint32_t crc) {
   SetCrcCordState(std::move(state));
 }
 
-const crc_internal::CrcCordState* absl_nullable Cord::MaybeGetCrcCordState()
-    const {
+const crc_internal::CrcCordState* absl_nullable
+Cord::MaybeGetCrcCordState() const {
   if (!contents_.is_tree() || !contents_.tree()->IsCrc()) {
     return nullptr;
   }
@@ -1510,7 +1509,7 @@ static std::string ReportError(CordRep* absl_nonnull root,
 
 static bool VerifyNode(CordRep* absl_nonnull root,
                        CordRep* absl_nonnull start_node) {
-  absl::InlinedVector<CordRep* absl_nonnull, 2> worklist;
+  absl::InlinedVector<CordRep * absl_nonnull, 2> worklist;
   worklist.push_back(start_node);
   do {
     CordRep* node = worklist.back();

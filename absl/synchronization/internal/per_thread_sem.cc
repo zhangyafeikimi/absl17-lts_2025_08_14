@@ -16,12 +16,11 @@
 #include "absl/base/internal/low_level_alloc.h"
 #ifndef ABSL_LOW_LEVEL_ALLOC_MISSING
 
-#include "absl/synchronization/internal/per_thread_sem.h"
-
 #include <atomic>
 
 #include "absl/base/attributes.h"
 #include "absl/base/internal/thread_identity.h"
+#include "absl/synchronization/internal/per_thread_sem.h"
 #include "absl/synchronization/internal/waiter.h"
 
 namespace absl {

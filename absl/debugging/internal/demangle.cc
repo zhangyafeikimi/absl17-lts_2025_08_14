@@ -132,8 +132,8 @@ static const AbbrevPair kBuiltinTypeList[] = {
     {"g", "__float128", 0},
     {"z", "ellipsis", 0},
 
-    {"De", "decimal128", 0},      // IEEE 754r decimal floating point (128 bits)
-    {"Dd", "decimal64", 0},       // IEEE 754r decimal floating point (64 bits)
+    {"De", "decimal128", 0},  // IEEE 754r decimal floating point (128 bits)
+    {"Dd", "decimal64", 0},   // IEEE 754r decimal floating point (64 bits)
     {"Dc", "decltype(auto)", 0},
     {"Da", "auto", 0},
     {"Dn", "std::nullptr_t", 0},  // i.e., decltype(nullptr)
@@ -141,7 +141,7 @@ static const AbbrevPair kBuiltinTypeList[] = {
     {"Di", "char32_t", 0},
     {"Du", "char8_t", 0},
     {"Ds", "char16_t", 0},
-    {"Dh", "float16", 0},         // IEEE 754r half-precision float (16 bits)
+    {"Dh", "float16", 0},  // IEEE 754r half-precision float (16 bits)
     {nullptr, nullptr, 0},
 };
 
@@ -199,7 +199,7 @@ typedef struct {
   // Abseil's public interface.
 #ifdef ABSL_INTERNAL_DEMANGLE_RECORDS_HIGH_WATER_MARK
   int high_water_mark;  // Input position where parsing failed.
-  bool too_complex;  // True if any guard.IsTooComplex() call returned true.
+  bool too_complex;     // True if any guard.IsTooComplex() call returned true.
 #endif
 } State;
 
@@ -313,9 +313,7 @@ static bool StrPrefix(const char *str, const char *prefix) {
   return prefix[i] == '\0';  // Consumed everything in "prefix".
 }
 
-static void InitState(State* state,
-                      const char* mangled,
-                      char* out,
+static void InitState(State *state, const char *mangled, char *out,
                       size_t out_size) {
   state->mangled_begin = mangled;
   state->out = out;
@@ -643,8 +641,8 @@ static bool ParseTemplateArg(State *state);
 static bool ParseBaseUnresolvedName(State *state);
 static bool ParseUnresolvedName(State *state);
 static bool ParseUnresolvedQualifierLevel(State *state);
-static bool ParseUnionSelector(State* state);
-static bool ParseFunctionParam(State* state);
+static bool ParseUnionSelector(State *state);
+static bool ParseFunctionParam(State *state);
 static bool ParseBracedExpression(State *state);
 static bool ParseExpression(State *state);
 static bool ParseInitializer(State *state);
@@ -829,8 +827,7 @@ static bool ParsePrefix(State *state) {
         // shaped like Nu14__some_builtinIiE6memberE occur in practice, and it
         // is not clear what else a compiler is supposed to do when a
         // vendor-extended type has named members.
-        ParseVendorExtendedType(state) ||
-        ParseUnscopedName(state) ||
+        ParseVendorExtendedType(state) || ParseUnscopedName(state) ||
         (ParseOneCharToken(state, 'M') && ParseUnnamedTypeName(state))) {
       has_something = true;
       MaybeIncreaseNestLevel(state);
@@ -1157,9 +1154,10 @@ static bool ParseConversionOperatorType(State *state) {
   // demanglings.  Remember the range of input for later rescanning.
   //
   // See `ParseType` and the `switch` below for the meaning of each char.
-  const char* begin_simple_prefixes = RemainingInput(state);
-  while (ParseCharClass(state, "OPRCGrVK")) {}
-  const char* end_simple_prefixes = RemainingInput(state);
+  const char *begin_simple_prefixes = RemainingInput(state);
+  while (ParseCharClass(state, "OPRCGrVK")) {
+  }
+  const char *end_simple_prefixes = RemainingInput(state);
 
   // Emit the base type first.
   if (!ParseType(state)) {
@@ -2214,9 +2212,8 @@ static bool ParseBracedExpression(State *state) {
   }
   state->parse_state = copy;
 
-  if (ParseTwoCharToken(state, "dX") &&
-      ParseExpression(state) && ParseExpression(state) &&
-      ParseBracedExpression(state)) {
+  if (ParseTwoCharToken(state, "dX") && ParseExpression(state) &&
+      ParseExpression(state) && ParseBracedExpression(state)) {
     return true;
   }
   state->parse_state = copy;
@@ -2746,9 +2743,7 @@ static bool ParseRequirement(State *state) {
 }
 
 // <type-constraint> ::= <name>
-static bool ParseTypeConstraint(State *state) {
-  return ParseName(state);
-}
+static bool ParseTypeConstraint(State *state) { return ParseName(state); }
 
 // <local-name> ::= Z <(function) encoding> E <(entity) name> [<discriminator>]
 //              ::= Z <(function) encoding> E s [<discriminator>]
@@ -2926,7 +2921,7 @@ static bool Overflowed(const State *state) {
 }
 
 // The demangler entry point.
-bool Demangle(const char* mangled, char* out, size_t out_size) {
+bool Demangle(const char *mangled, char *out, size_t out_size) {
   if (mangled[0] == '_' && mangled[1] == 'R') {
     return DemangleRustSymbolEncoding(mangled, out, out_size);
   }
@@ -2937,10 +2932,10 @@ bool Demangle(const char* mangled, char* out, size_t out_size) {
          state.parse_state.out_cur_idx > 0;
 }
 
-std::string DemangleString(const char* mangled) {
+std::string DemangleString(const char *mangled) {
   std::string out;
   int status = 0;
-  char* demangled = nullptr;
+  char *demangled = nullptr;
 #if ABSL_INTERNAL_HAS_CXA_DEMANGLE
   demangled = abi::__cxa_demangle(mangled, nullptr, nullptr, &status);
 #endif

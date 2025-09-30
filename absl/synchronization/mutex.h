@@ -557,14 +557,14 @@ class ABSL_LOCKABLE ABSL_ATTRIBUTE_WARN_UNUSED Mutex {
   // Block a thread on mutex.
   void Block(base_internal::PerThreadSynch* absl_nonnull s);
   // Wake a thread; return successor.
-  base_internal::PerThreadSynch* absl_nullable Wakeup(
-      base_internal::PerThreadSynch* absl_nonnull w);
+  base_internal::PerThreadSynch* absl_nullable
+  Wakeup(base_internal::PerThreadSynch* absl_nonnull w);
   void Dtor();
 
-  friend class CondVar;   // for access to Trans()/Fer().
+  friend class CondVar;                // for access to Trans()/Fer().
   void Trans(MuHow absl_nonnull how);  // used for CondVar->Mutex transfer
   void Fer(base_internal::PerThreadSynch* absl_nonnull
-           w);  // used for CondVar->Mutex transfer
+               w);  // used for CondVar->Mutex transfer
 
   // Catch the error of writing Mutex when intending MutexLock.
   explicit Mutex(const volatile Mutex* absl_nullable /*ignored*/) {}
@@ -794,10 +794,9 @@ class Condition {
   // a function template is passed as `func`. Also, the dummy `typename = void`
   // template parameter exists just to work around a MSVC mangling bug.
   template <typename T, typename = void>
-  Condition(
-      bool (*absl_nonnull func)(T* absl_nullability_unknown),
-      typename absl::internal::type_identity<T>::type* absl_nullability_unknown
-      arg);
+  Condition(bool (*absl_nonnull func)(T* absl_nullability_unknown),
+            typename absl::internal::type_identity<T>::type*
+                absl_nullability_unknown arg);
 
   // Templated version for invoking a method that returns a `bool`.
   //
@@ -814,10 +813,9 @@ class Condition {
 
   // Same as above, for const members
   template <typename T>
-  Condition(
-      const T* absl_nonnull object,
-      bool (absl::internal::type_identity<T>::type::* absl_nonnull method)()
-          const);
+  Condition(const T* absl_nonnull object,
+            bool (absl::internal::type_identity<T>::type::* absl_nonnull
+                      method)() const);
 
   // A Condition that returns the value of `*cond`
   explicit Condition(const bool* absl_nonnull cond);
@@ -1186,7 +1184,7 @@ template <typename T, typename>
 inline Condition::Condition(
     bool (*absl_nonnull func)(T* absl_nullability_unknown),
     typename absl::internal::type_identity<T>::type* absl_nullability_unknown
-    arg)
+        arg)
     // Just delegate to the overload above.
     : Condition(func, arg) {}
 

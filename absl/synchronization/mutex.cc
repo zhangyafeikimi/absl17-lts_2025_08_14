@@ -1271,9 +1271,7 @@ static void LockLeave(Mutex* mu, GraphId id, SynchLocksHeld* held_locks) {
       }
       if (i == n) {  // mu missing means releasing unheld lock
         SynchEvent* mu_events = GetSynchEvent(mu);
-        ABSL_RAW_LOG(FATAL,
-                     "thread releasing lock it does not hold: %p %s; "
-                     ,
+        ABSL_RAW_LOG(FATAL, "thread releasing lock it does not hold: %p %s; ",
                      static_cast<void*>(mu),
                      mu_events == nullptr ? "" : mu_events->name);
       }
@@ -1421,7 +1419,7 @@ static GraphId DeadlockCheck(Mutex* mu) {
       // Symbolize only 2 first deadlock report to avoid huge slowdowns.
       bool symbolize = number_of_reported_deadlocks <= 2;
       ABSL_RAW_LOG(ERROR, "Potential Mutex deadlock: %s",
-                   CurrentStackString(b->buf, sizeof (b->buf), symbolize));
+                   CurrentStackString(b->buf, sizeof(b->buf), symbolize));
       size_t len = 0;
       for (int j = 0; j != all_locks->n; j++) {
         void* pr = deadlock_graph->Ptr(all_locks->locks[j].id);

@@ -137,7 +137,7 @@ CpuType GetIntelCpuType() {
             case 0x4f:  // Broadwell
             case 0x56:  // BroadwellDE
               return CpuType::kIntelBroadwell;
-            case 0x55:                 // Skylake Xeon
+            case 0x55:                         // Skylake Xeon
               if ((cpu_info[0] & 0x0f) < 5) {  // stepping < 5 is skylake
                 return CpuType::kIntelSkylakeXeon;
               } else {  // stepping >= 5 is cascadelake
@@ -271,18 +271,24 @@ CpuType GetCpuType() {
     switch (implementer) {
       case 0x41:
         switch (part_number) {
-          case 0xd0c: return CpuType::kArmNeoverseN1;
-          case 0xd40: return CpuType::kArmNeoverseV1;
-          case 0xd49: return CpuType::kArmNeoverseN2;
-          case 0xd4f: return CpuType::kArmNeoverseV2;
-          case 0xd8e: return CpuType::kArmNeoverseN3;
+          case 0xd0c:
+            return CpuType::kArmNeoverseN1;
+          case 0xd40:
+            return CpuType::kArmNeoverseV1;
+          case 0xd49:
+            return CpuType::kArmNeoverseN2;
+          case 0xd4f:
+            return CpuType::kArmNeoverseV2;
+          case 0xd8e:
+            return CpuType::kArmNeoverseN3;
           default:
             return CpuType::kUnknown;
         }
         break;
       case 0xc0:
         switch (part_number) {
-          case 0xac3: return CpuType::kAmpereSiryn;
+          case 0xac3:
+            return CpuType::kAmpereSiryn;
           default:
             return CpuType::kUnknown;
         }

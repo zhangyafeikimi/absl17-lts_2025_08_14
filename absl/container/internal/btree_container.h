@@ -684,13 +684,13 @@ class btree_map_container : public btree_set_container<Tree> {
   }
 
   template <class K, class... Args>
-  std::pair<iterator, bool> try_emplace_impl(K &&k, Args &&... args) {
+  std::pair<iterator, bool> try_emplace_impl(K &&k, Args &&...args) {
     return this->tree_.insert_unique(
         k, std::piecewise_construct, std::forward_as_tuple(std::forward<K>(k)),
         std::forward_as_tuple(std::forward<Args>(args)...));
   }
   template <class K, class... Args>
-  iterator try_emplace_hint_impl(const_iterator hint, K &&k, Args &&... args) {
+  iterator try_emplace_hint_impl(const_iterator hint, K &&k, Args &&...args) {
     return this->tree_
         .insert_hint_unique(iterator(hint), k, std::piecewise_construct,
                             std::forward_as_tuple(std::forward<K>(k)),

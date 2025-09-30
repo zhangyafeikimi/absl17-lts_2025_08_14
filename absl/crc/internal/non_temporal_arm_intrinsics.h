@@ -42,8 +42,8 @@ static inline __attribute__((always_inline)) void _mm_sfence(void) {
 
 // Loads 128-bit value. :
 // https://msdn.microsoft.com/zh-cn/library/f4k12ae8(v=vs.90).aspx
-static inline __attribute__((always_inline)) __m128i _mm_loadu_si128(
-    const __m128i *p) {
+static inline __attribute__((always_inline)) __m128i
+_mm_loadu_si128(const __m128i *p) {
   return vreinterpretq_m128i_s32(vld1q_s32((const int32_t *)p));
 }
 
@@ -62,16 +62,16 @@ static inline __attribute__((always_inline)) void _mm_stream_si128(__m128i *p,
 
 // Sets the 16 signed 8-bit integer values.
 // https://msdn.microsoft.com/en-us/library/x0cx8zd3(v=vs.90).aspx
-static inline __attribute__((always_inline)) __m128i _mm_set_epi8(
-    signed char b15, signed char b14, signed char b13, signed char b12,
-    signed char b11, signed char b10, signed char b9, signed char b8,
-    signed char b7, signed char b6, signed char b5, signed char b4,
-    signed char b3, signed char b2, signed char b1, signed char b0) {
-  int8_t __attribute__((aligned(16)))
-  data[16] = {(int8_t)b0,  (int8_t)b1,  (int8_t)b2,  (int8_t)b3,
-              (int8_t)b4,  (int8_t)b5,  (int8_t)b6,  (int8_t)b7,
-              (int8_t)b8,  (int8_t)b9,  (int8_t)b10, (int8_t)b11,
-              (int8_t)b12, (int8_t)b13, (int8_t)b14, (int8_t)b15};
+static inline __attribute__((always_inline)) __m128i
+_mm_set_epi8(signed char b15, signed char b14, signed char b13, signed char b12,
+             signed char b11, signed char b10, signed char b9, signed char b8,
+             signed char b7, signed char b6, signed char b5, signed char b4,
+             signed char b3, signed char b2, signed char b1, signed char b0) {
+  int8_t __attribute__((aligned(16))) data[16] = {
+      (int8_t)b0,  (int8_t)b1,  (int8_t)b2,  (int8_t)b3,
+      (int8_t)b4,  (int8_t)b5,  (int8_t)b6,  (int8_t)b7,
+      (int8_t)b8,  (int8_t)b9,  (int8_t)b10, (int8_t)b11,
+      (int8_t)b12, (int8_t)b13, (int8_t)b14, (int8_t)b15};
   return (__m128i)vld1q_s8(data);
 }
 #endif  // __aarch64__

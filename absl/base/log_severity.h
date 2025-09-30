@@ -100,10 +100,14 @@ static constexpr absl::LogSeverity kLogDebugFatal = absl::LogSeverity::kFatal;
 // severity level if it is one of the standard levels and "UNKNOWN" otherwise.
 constexpr const char* LogSeverityName(absl::LogSeverity s) {
   switch (s) {
-    case absl::LogSeverity::kInfo: return "INFO";
-    case absl::LogSeverity::kWarning: return "WARNING";
-    case absl::LogSeverity::kError: return "ERROR";
-    case absl::LogSeverity::kFatal: return "FATAL";
+    case absl::LogSeverity::kInfo:
+      return "INFO";
+    case absl::LogSeverity::kWarning:
+      return "WARNING";
+    case absl::LogSeverity::kError:
+      return "ERROR";
+    case absl::LogSeverity::kFatal:
+      return "FATAL";
   }
   return "UNKNOWN";
 }

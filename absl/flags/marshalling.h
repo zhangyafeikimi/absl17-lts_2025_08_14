@@ -234,8 +234,8 @@ bool AbslParseFlag(absl::string_view, unsigned long*, std::string*);   // NOLINT
 bool AbslParseFlag(absl::string_view, long long*, std::string*);       // NOLINT
 bool AbslParseFlag(absl::string_view, unsigned long long*,             // NOLINT
                    std::string*);
-bool AbslParseFlag(absl::string_view, absl::int128*, std::string*);    // NOLINT
-bool AbslParseFlag(absl::string_view, absl::uint128*, std::string*);   // NOLINT
+bool AbslParseFlag(absl::string_view, absl::int128*, std::string*);   // NOLINT
+bool AbslParseFlag(absl::string_view, absl::uint128*, std::string*);  // NOLINT
 bool AbslParseFlag(absl::string_view, float*, std::string*);
 bool AbslParseFlag(absl::string_view, double*, std::string*);
 bool AbslParseFlag(absl::string_view, std::string*, std::string*);

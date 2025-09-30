@@ -162,11 +162,13 @@ static uintptr_t GetFP(const void *vuc) {
 // checks (the strictness of which is controlled by the boolean parameter
 // "STRICT_UNWINDING") to reduce the chance that a bad pointer is returned.
 template <bool STRICT_UNWINDING, bool WITH_CONTEXT>
-ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS  // May read random elements from stack.
-ABSL_ATTRIBUTE_NO_SANITIZE_MEMORY   // May read random elements from stack.
-ABSL_ATTRIBUTE_NO_SANITIZE_THREAD   // May read random elements from stack.
-static void **NextStackFrame(void **old_fp, const void *uc,
-                             size_t stack_low, size_t stack_high) {
+ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS     // May read random elements from stack.
+    ABSL_ATTRIBUTE_NO_SANITIZE_MEMORY  // May read random elements from stack.
+        ABSL_ATTRIBUTE_NO_SANITIZE_THREAD  // May read random elements from
+                                           // stack.
+    static void **
+    NextStackFrame(void **old_fp, const void *uc, size_t stack_low,
+                   size_t stack_high) {
   void **new_fp = (void **)*old_fp;
 
 #if defined(__linux__) && defined(__i386__)
@@ -197,19 +199,17 @@ static void **NextStackFrame(void **old_fp, const void *uc,
           assert(false && "VDSO is present, but doesn't have expected symbols");
           num_push_instructions = 0;
         } else {
-          kernel_rt_sigreturn_address =
-              reinterpret_cast<const unsigned char *>(
-                  rt_sigreturn_symbol_info.address);
-          kernel_vsyscall_address =
-              reinterpret_cast<const unsigned char *>(
-                  vsyscall_symbol_info.address);
+          kernel_rt_sigreturn_address = reinterpret_cast<const unsigned char *>(
+              rt_sigreturn_symbol_info.address);
+          kernel_vsyscall_address = reinterpret_cast<const unsigned char *>(
+              vsyscall_symbol_info.address);
           num_push_instructions =
               CountPushInstructions(kernel_vsyscall_address);
         }
       } else {
         num_push_instructions = 0;
       }
-#else  // ABSL_HAVE_VDSO_SUPPORT
+#else   // ABSL_HAVE_VDSO_SUPPORT
       num_push_instructions = 0;
 #endif  // ABSL_HAVE_VDSO_SUPPORT
     }
@@ -229,8 +229,7 @@ static void **NextStackFrame(void **old_fp, const void *uc,
         void **const reg_esp =
             reinterpret_cast<void **>(ucv->uc_mcontext.gregs[REG_ESP]);
         // Check that alleged %esp is not null and is reasonably aligned.
-        if (reg_esp &&
-            ((uintptr_t)reg_esp & (sizeof(reg_esp) - 1)) == 0) {
+        if (reg_esp && ((uintptr_t)reg_esp & (sizeof(reg_esp) - 1)) == 0) {
           // Check that alleged %esp is actually readable. This is to prevent
           // "double fault" in case we hit the first fault due to e.g. stack
           // corruption.
@@ -327,13 +326,14 @@ static void **NextStackFrame(void **old_fp, const void *uc,
 }
 
 template <bool IS_STACK_FRAMES, bool IS_WITH_CONTEXT>
-ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS  // May read random elements from stack.
-ABSL_ATTRIBUTE_NO_SANITIZE_MEMORY   // May read random elements from stack.
-ABSL_ATTRIBUTE_NO_SANITIZE_THREAD   // May read random elements from stack.
-ABSL_ATTRIBUTE_NOINLINE
-static int UnwindImpl(void **result, uintptr_t *frames, int *sizes,
-                      int max_depth, int skip_count, const void *ucp,
-                      int *min_dropped_frames) {
+ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS     // May read random elements from stack.
+    ABSL_ATTRIBUTE_NO_SANITIZE_MEMORY  // May read random elements from stack.
+        ABSL_ATTRIBUTE_NO_SANITIZE_THREAD  // May read random elements from
+                                           // stack.
+            ABSL_ATTRIBUTE_NOINLINE static int
+            UnwindImpl(void **result, uintptr_t *frames, int *sizes,
+                       int max_depth, int skip_count, const void *ucp,
+                       int *min_dropped_frames) {
   int n = 0;
   void **fp = reinterpret_cast<void **>(__builtin_frame_address(0));
 
@@ -395,9 +395,7 @@ static int UnwindImpl(void **result, uintptr_t *frames, int *sizes,
 namespace absl {
 ABSL_NAMESPACE_BEGIN
 namespace debugging_internal {
-bool StackTraceWorksForTest() {
-  return true;
-}
+bool StackTraceWorksForTest() { return true; }
 }  // namespace debugging_internal
 ABSL_NAMESPACE_END
 }  // namespace absl

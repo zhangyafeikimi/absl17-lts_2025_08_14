@@ -43,9 +43,7 @@ ABSL_NAMESPACE_BEGIN
 namespace container_internal {
 
 namespace {
-ABSL_CONST_INIT std::atomic<bool> g_hashtablez_enabled{
-    false
-};
+ABSL_CONST_INIT std::atomic<bool> g_hashtablez_enabled{false};
 ABSL_CONST_INIT std::atomic<int32_t> g_hashtablez_sample_parameter{1 << 10};
 std::atomic<HashtablezConfigListener> g_hashtablez_config_listener{nullptr};
 
@@ -104,13 +102,8 @@ void HashtablezInfo::PrepareForSampling(int64_t stride,
 }
 
 static bool ShouldForceSampling() {
-  enum ForceState {
-    kDontForce,
-    kForce,
-    kUninitialized
-  };
-  ABSL_CONST_INIT static std::atomic<ForceState> global_state{
-      kUninitialized};
+  enum ForceState { kDontForce, kForce, kUninitialized };
+  ABSL_CONST_INIT static std::atomic<ForceState> global_state{kUninitialized};
   ForceState state = global_state.load(std::memory_order_relaxed);
   if (ABSL_PREDICT_TRUE(state == kDontForce)) return false;
 

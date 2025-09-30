@@ -16,7 +16,6 @@
 #ifndef ABSL_STRINGS_INTERNAL_STR_FORMAT_EXTENSION_H_
 #define ABSL_STRINGS_INTERNAL_STR_FORMAT_EXTENSION_H_
 
-
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
@@ -248,12 +247,13 @@ inline char FormatConversionCharToChar(FormatConversionChar c) {
   if (c == FormatConversionCharInternal::kNone) {
     return '\0';
 
-#define ABSL_INTERNAL_X_VAL(e)                       \
-  } else if (c == FormatConversionCharInternal::e) { \
+#define ABSL_INTERNAL_X_VAL(e)                     \
+  }                                                \
+  else if (c == FormatConversionCharInternal::e) { \
     return #e[0];
 #define ABSL_INTERNAL_X_SEP
-  ABSL_INTERNAL_CONVERSION_CHARS_EXPAND_(ABSL_INTERNAL_X_VAL,
-                                         ABSL_INTERNAL_X_SEP)
+    ABSL_INTERNAL_CONVERSION_CHARS_EXPAND_(ABSL_INTERNAL_X_VAL,
+                                           ABSL_INTERNAL_X_SEP)
   } else {
     return '\0';
   }

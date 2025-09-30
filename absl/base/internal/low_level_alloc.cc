@@ -585,8 +585,9 @@ static void *DoAllocWithArena(size_t request, LowLevelAlloc::Arena *arena) {
 #else
 #ifndef ABSL_LOW_LEVEL_ALLOC_ASYNC_SIGNAL_SAFE_MISSING
       if ((arena->flags & LowLevelAlloc::kAsyncSignalSafe) != 0) {
-        new_pages = base_internal::DirectMmap(nullptr, new_pages_size,
-            PROT_WRITE|PROT_READ, MAP_ANONYMOUS|MAP_PRIVATE, -1, 0);
+        new_pages = base_internal::DirectMmap(
+            nullptr, new_pages_size, PROT_WRITE | PROT_READ,
+            MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
       } else {
         new_pages = mmap(nullptr, new_pages_size, PROT_WRITE | PROT_READ,
                          MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);

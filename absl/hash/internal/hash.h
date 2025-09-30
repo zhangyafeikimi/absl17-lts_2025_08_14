@@ -506,7 +506,7 @@ H AbslHashValue(H hash_state, std::nullptr_t) {
 
 // AbslHashValue() for hashing pointers-to-member
 template <typename H, typename T, typename C>
-H AbslHashValue(H hash_state, T C::*ptr) {
+H AbslHashValue(H hash_state, T C::* ptr) {
   auto salient_ptm_size = [](std::size_t n) -> std::size_t {
 #if defined(_MSC_VER)
     // Pointers-to-member-function on MSVC consist of one pointer plus 0, 1, 2,
@@ -641,9 +641,9 @@ H AbslHashValue(H hash_state, std::basic_string_view<Char> str) {
 
 // Support std::filesystem::path. The SFINAE is required because some string
 // types are implicitly convertible to std::filesystem::path.
-template <typename Path, typename H,
-          typename = absl::enable_if_t<
-              std::is_same_v<Path, std::filesystem::path>>>
+template <
+    typename Path, typename H,
+    typename = absl::enable_if_t<std::is_same_v<Path, std::filesystem::path>>>
 H AbslHashValue(H hash_state, const Path& path) {
   // This is implemented by deferring to the standard library to compute the
   // hash.  The standard library requires that for two paths, `p1 == p2`, then

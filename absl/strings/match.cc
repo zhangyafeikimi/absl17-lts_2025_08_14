@@ -45,8 +45,7 @@ bool StrContainsIgnoreCase(absl::string_view haystack,
   return false;
 }
 
-bool StrContainsIgnoreCase(absl::string_view haystack,
-                           char needle) noexcept {
+bool StrContainsIgnoreCase(absl::string_view haystack, char needle) noexcept {
   char upper_needle = absl::ascii_toupper(static_cast<unsigned char>(needle));
   char lower_needle = absl::ascii_tolower(static_cast<unsigned char>(needle));
   if (upper_needle == lower_needle) {
@@ -74,7 +73,7 @@ absl::string_view FindLongestCommonPrefix(absl::string_view a,
   const absl::string_view::size_type limit = std::min(a.size(), b.size());
   const char* const pa = a.data();
   const char* const pb = b.data();
-  absl::string_view::size_type count = (unsigned) 0;
+  absl::string_view::size_type count = (unsigned)0;
 
   if (ABSL_PREDICT_FALSE(limit < 8)) {
     while (ABSL_PREDICT_TRUE(count + 2 <= limit)) {
@@ -119,7 +118,7 @@ absl::string_view FindLongestCommonSuffix(absl::string_view a,
 
   const char* pa = a.data() + a.size() - 1;
   const char* pb = b.data() + b.size() - 1;
-  absl::string_view::size_type count = (unsigned) 0;
+  absl::string_view::size_type count = (unsigned)0;
   while (count < limit && *pa == *pb) {
     --pa;
     --pb;

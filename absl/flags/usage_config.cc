@@ -61,8 +61,7 @@ bool ContainsHelpshortFlags(absl::string_view filename) {
 #if defined(_WIN32)
   absl::ConsumeSuffix(&program_name_ref, ".exe");
 #endif
-  if (!absl::ConsumePrefix(&suffix, program_name_ref))
-    return false;
+  if (!absl::ConsumePrefix(&suffix, program_name_ref)) return false;
   return absl::StartsWith(suffix, ".") || absl::StartsWith(suffix, "-main.") ||
          absl::StartsWith(suffix, "_main.");
 }

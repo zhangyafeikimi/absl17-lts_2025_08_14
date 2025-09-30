@@ -45,8 +45,7 @@ void SubstituteAndAppendArray(std::string* absl_nonnull output,
     if (format[i] == '$') {
       if (i + 1 >= format.size()) {
 #ifndef NDEBUG
-        ABSL_RAW_LOG(FATAL,
-                     "Invalid absl::Substitute() format string: \"%s\".",
+        ABSL_RAW_LOG(FATAL, "Invalid absl::Substitute() format string: \"%s\".",
                      absl::CEscape(format).c_str());
 #endif
         return;
@@ -71,8 +70,7 @@ void SubstituteAndAppendArray(std::string* absl_nonnull output,
         ++i;  // Skip next char.
       } else {
 #ifndef NDEBUG
-        ABSL_RAW_LOG(FATAL,
-                     "Invalid absl::Substitute() format string: \"%s\".",
+        ABSL_RAW_LOG(FATAL, "Invalid absl::Substitute() format string: \"%s\".",
                      absl::CEscape(format).c_str());
 #endif
         return;

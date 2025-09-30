@@ -55,9 +55,7 @@ struct GraphId {
 };
 
 // Return an invalid graph id that will never be assigned by GraphCycles.
-inline GraphId InvalidGraphId() {
-  return GraphId{0};
-}
+inline GraphId InvalidGraphId() { return GraphId{0}; }
 
 class GraphCycles {
  public:
@@ -133,8 +131,9 @@ class GraphCycles {
 
   // ----------------------------------------------------
   struct Rep;
+
  private:
-  Rep *rep_;      // opaque representation
+  Rep* rep_;  // opaque representation
   GraphCycles(const GraphCycles&) = delete;
   GraphCycles& operator=(const GraphCycles&) = delete;
 };

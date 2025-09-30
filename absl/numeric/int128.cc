@@ -166,7 +166,7 @@ std::string Uint128ToFormattedString(uint128 v, std::ios_base::fmtflags flags) {
       div = 01000000000000000000000;  // 8^21
       div_base_log = 21;
       break;
-    default:  // std::ios::dec
+    default:                        // std::ios::dec
       div = 10000000000000000000u;  // 10^19
       div_base_log = 19;
       break;
@@ -266,8 +266,8 @@ int128 operator/(int128 lhs, int128 rhs) {
 
   uint128 quotient = 0;
   uint128 remainder = 0;
-  DivModImpl(UnsignedAbsoluteValue(lhs), UnsignedAbsoluteValue(rhs),
-             &quotient, &remainder);
+  DivModImpl(UnsignedAbsoluteValue(lhs), UnsignedAbsoluteValue(rhs), &quotient,
+             &remainder);
   if ((Int128High64(lhs) < 0) != (Int128High64(rhs) < 0)) quotient = -quotient;
   return MakeInt128(int128_internal::BitCastToSigned(Uint128High64(quotient)),
                     Uint128Low64(quotient));
@@ -278,8 +278,8 @@ int128 operator%(int128 lhs, int128 rhs) {
 
   uint128 quotient = 0;
   uint128 remainder = 0;
-  DivModImpl(UnsignedAbsoluteValue(lhs), UnsignedAbsoluteValue(rhs),
-             &quotient, &remainder);
+  DivModImpl(UnsignedAbsoluteValue(lhs), UnsignedAbsoluteValue(rhs), &quotient,
+             &remainder);
   if (Int128High64(lhs) < 0) remainder = -remainder;
   return MakeInt128(int128_internal::BitCastToSigned(Uint128High64(remainder)),
                     Uint128Low64(remainder));

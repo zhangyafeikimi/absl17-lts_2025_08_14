@@ -49,7 +49,6 @@ constexpr int64_t kIntervalIfDisabled = 1 << 16;
 
 ABSL_ATTRIBUTE_NOINLINE int64_t
 cordz_should_profile_slow(SamplingState& state) {
-
   thread_local absl::profiling_internal::ExponentialBiased
       exponential_biased_generator;
   int32_t mean_interval = get_cordz_mean_interval();

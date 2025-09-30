@@ -47,14 +47,14 @@ void TraceObserved(const void* object, ObjectKind kind);
 // ---------------------------------------------------------------------------
 extern "C" {
 
-  void ABSL_INTERNAL_C_SYMBOL(AbslInternalTraceWait)(const void* object,
-                                                     ObjectKind kind);
-  void ABSL_INTERNAL_C_SYMBOL(AbslInternalTraceContinue)(const void* object,
-                                                         ObjectKind kind);
-  void ABSL_INTERNAL_C_SYMBOL(AbslInternalTraceSignal)(const void* object,
+void ABSL_INTERNAL_C_SYMBOL(AbslInternalTraceWait)(const void* object,
+                                                   ObjectKind kind);
+void ABSL_INTERNAL_C_SYMBOL(AbslInternalTraceContinue)(const void* object,
                                                        ObjectKind kind);
-  void ABSL_INTERNAL_C_SYMBOL(AbslInternalTraceObserved)(const void* object,
-                                                         ObjectKind kind);
+void ABSL_INTERNAL_C_SYMBOL(AbslInternalTraceSignal)(const void* object,
+                                                     ObjectKind kind);
+void ABSL_INTERNAL_C_SYMBOL(AbslInternalTraceObserved)(const void* object,
+                                                       ObjectKind kind);
 
 }  // extern "C"
 

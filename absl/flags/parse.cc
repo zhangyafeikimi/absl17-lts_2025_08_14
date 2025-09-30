@@ -721,7 +721,8 @@ std::vector<char*> ParseCommandLineImpl(int argc, char* argv[],
     if (undef_flag_action == OnUndefinedFlag::kAbortIfUndefined) {
       if (!unrecognized_flags.empty()) {
         flags_internal::HandleUsageFlags(error_help_output,
-        ProgramUsageMessage()); std::exit(1);
+                                         ProgramUsageMessage());
+        std::exit(1);
       }
     }
   }

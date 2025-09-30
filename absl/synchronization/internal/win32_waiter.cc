@@ -65,19 +65,15 @@ class Win32Waiter::WinHelper {
 
 class LockHolder {
  public:
-  explicit LockHolder(SRWLOCK* mu) : mu_(mu) {
-    AcquireSRWLockExclusive(mu_);
-  }
+  explicit LockHolder(SRWLOCK *mu) : mu_(mu) { AcquireSRWLockExclusive(mu_); }
 
-  LockHolder(const LockHolder&) = delete;
-  LockHolder& operator=(const LockHolder&) = delete;
+  LockHolder(const LockHolder &) = delete;
+  LockHolder &operator=(const LockHolder &) = delete;
 
-  ~LockHolder() {
-    ReleaseSRWLockExclusive(mu_);
-  }
+  ~LockHolder() { ReleaseSRWLockExclusive(mu_); }
 
  private:
-  SRWLOCK* mu_;
+  SRWLOCK *mu_;
 };
 
 Win32Waiter::Win32Waiter() {

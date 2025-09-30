@@ -626,13 +626,14 @@ class LayoutImpl<
       static_assert(N < NumOffsets, "Index out of bounds");
       (void)p;
 #ifdef ABSL_HAVE_ADDRESS_SANITIZER
-    PoisonPadding<Char, N - 1>(p);
-    // The `if` is an optimization. It doesn't affect the observable behaviour.
-    if (ElementAlignment<N - 1>::value % ElementAlignment<N>::value) {
-      size_t start =
-          Offset<N - 1>() + SizeOf<ElementType<N - 1>>::value * Size<N - 1>();
-      ASAN_POISON_MEMORY_REGION(p + start, Offset<N>() - start);
-    }
+      PoisonPadding<Char, N - 1>(p);
+      // The `if` is an optimization. It doesn't affect the observable
+      // behaviour.
+      if (ElementAlignment<N - 1>::value % ElementAlignment<N>::value) {
+        size_t start =
+            Offset<N - 1>() + SizeOf<ElementType<N - 1>>::value * Size<N - 1>();
+        ASAN_POISON_MEMORY_REGION(p + start, Offset<N>() - start);
+      }
 #endif
     }
   }

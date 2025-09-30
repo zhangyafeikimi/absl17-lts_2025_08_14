@@ -67,8 +67,7 @@ constexpr uint32_t kMaxI = 1 << 30;
 // not enough space in the output buffer).
 bool ConsumeOptionalAsciiPrefix(const char*& punycode_begin,
                                 const char* const punycode_end,
-                                char* const out_begin,
-                                char* const out_end,
+                                char* const out_begin, char* const out_end,
                                 uint32_t& num_ascii_chars) {
   num_ascii_chars = 0;
 
@@ -190,8 +189,8 @@ char* absl_nullable DecodeRustPunycode(DecodeRustPunycodeOptions options) {
 
   // If there are any ASCII characters, consume them and their trailing
   // underscore delimiter.
-  if (!ConsumeOptionalAsciiPrefix(punycode_begin, punycode_end,
-                                  out_begin, out_end, num_chars)) {
+  if (!ConsumeOptionalAsciiPrefix(punycode_begin, punycode_end, out_begin,
+                                  out_end, num_chars)) {
     return nullptr;
   }
   uint32_t total_utf8_bytes = num_chars;
@@ -209,19 +208,19 @@ char* absl_nullable DecodeRustPunycode(DecodeRustPunycodeOptions options) {
     // Update bias as in RFC 3492 section 6.1.  (We have inlined adapt.)
     uint32_t delta = i - old_i;
     delta /= (old_i == 0 ? kDamp : 2);
-    delta += delta/(num_chars + 1);
+    delta += delta / (num_chars + 1);
     bias = 0;
-    while (delta > ((kBase - kTMin) * kTMax)/2) {
+    while (delta > ((kBase - kTMin) * kTMax) / 2) {
       delta /= kBase - kTMin;
       bias += kBase;
     }
-    bias += ((kBase - kTMin + 1) * delta)/(delta + kSkew);
+    bias += ((kBase - kTMin + 1) * delta) / (delta + kSkew);
 
     // Back in section 6.2, compute the new code point and insertion index.
     static_assert(
         kMaxI + kMaxCodePoint < (uint64_t{1} << 32),
         "Make kMaxI smaller or n 64 bits wide to prevent silent wraparound");
-    n += i/(num_chars + 1);
+    n += i / (num_chars + 1);
     i %= num_chars + 1;
 
     // To actually insert, we need to convert the code point n to UTF-8 and the
@@ -235,12 +234,10 @@ char* absl_nullable DecodeRustPunycode(DecodeRustPunycodeOptions options) {
     }
 
     // Now insert the new character into both our length map and the output.
-    uint32_t n_index =
-        utf8_lengths.InsertAndReturnSumOfPredecessors(
-            i, utf8_for_code_point.length);
-    std::memmove(
-        out_begin + n_index + utf8_for_code_point.length, out_begin + n_index,
-        total_utf8_bytes + 1 - n_index);
+    uint32_t n_index = utf8_lengths.InsertAndReturnSumOfPredecessors(
+        i, utf8_for_code_point.length);
+    std::memmove(out_begin + n_index + utf8_for_code_point.length,
+                 out_begin + n_index, total_utf8_bytes + 1 - n_index);
     std::memcpy(out_begin + n_index, utf8_for_code_point.bytes,
                 utf8_for_code_point.length);
     total_utf8_bytes += utf8_for_code_point.length;

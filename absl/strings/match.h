@@ -89,8 +89,7 @@ inline constexpr bool EndsWith(absl::string_view text,
 bool StrContainsIgnoreCase(absl::string_view haystack,
                            absl::string_view needle) noexcept;
 
-bool StrContainsIgnoreCase(absl::string_view haystack,
-                           char needle) noexcept;
+bool StrContainsIgnoreCase(absl::string_view haystack, char needle) noexcept;
 
 // EqualsIgnoreCase()
 //

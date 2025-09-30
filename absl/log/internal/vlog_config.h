@@ -155,8 +155,8 @@ int PrependVModule(absl::string_view module_pattern, int log_level);
 void OnVLogVerbosityUpdate(std::function<void()> cb);
 
 // Does not allocate memory.
-VLogSite* absl_nullable SetVModuleListHeadForTestOnly(
-    VLogSite* absl_nullable v);
+VLogSite* absl_nullable
+SetVModuleListHeadForTestOnly(VLogSite* absl_nullable v);
 
 }  // namespace log_internal
 ABSL_NAMESPACE_END
